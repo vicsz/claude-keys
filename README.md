@@ -44,7 +44,7 @@ and it closes by itself after 10 seconds.
 
 ## Install
 
-You need a Mac, the Claude desktop app, Logi Options+ and an MX Creative Keypad.
+You need a Mac, the Claude desktop app, Logi Options+ (signed in to a Logi account) and an MX Creative Keypad.
 Clone this repo somewhere it can stay: the plugin runs from this folder.
 
 ### 1. Build the plugin
@@ -60,7 +60,7 @@ sets up the tools and builds the plugin. Ask it for changes the same way.
 
 ### 2. Place the keys
 
-Logi plugins can't ship a ready-made layout (see [Logitech limits](#logitech-limits)), so you drag each key on once:
+Logi plugins can't ship a ready-made layout (see [Logitech limitations](#logitech-limitations)), so you drag each key on once:
 
 1. Open Logi Options+ and select your keypad.
 2. Add a new page, or use the first one. Either works.
@@ -87,9 +87,9 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 - Codex support covers the session keys only: they show a thread's status and switch to it.
   Dictate, Return and Cancel act on Claude only, and Archive on a held session key is Claude only.
 
-## Logitech limits
+## Logitech limitations
 
-Two things work the way they do because of how Logi's plugin system works:
+Three things work the way they do because of how Logi's plugin system works:
 
 - **Six separate session keys, not one.** When a key is pressed or drawn, the plugin is only told which action
   it is, not which key on the keypad. Six copies of one "Session" action would look identical: they'd all show
@@ -97,3 +97,5 @@ Two things work the way they do because of how Logi's plugin system works:
   and each one tracks its own session.
 - **No ready-made layout.** Logi plugins can ship a preset profile only for a specific app. Claude Keys works
   in every app, so it can't install a layout for you, and you drag the keys on yourself.
+- **You need a Logi account.** Logi Options+ only lets you add plugins while you're signed in, so create a free
+  account first. It's an odd requirement for a local plugin, but there's no way around it.

@@ -15,7 +15,7 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 - Log: `~/Library/Application Support/Logi/LogiPluginService/Logs/plugin_logs/ClaudeKeys.log`
 
 ## Installing for a user
-1. Check the basics: macOS, the Claude desktop app, and Logi Options+ with the keypad connected. If one is missing, stop and tell the user.
+1. Check the basics: macOS, the Claude desktop app, and Logi Options+ signed in to a Logi account (plugins can't be added without one) with the keypad connected. If one is missing, stop and tell the user.
 2. `dotnet --version` must be 10 or later. If not: `brew install --cask dotnet-sdk`.
 3. If `LogiPluginTool` is missing: `dotnet tool install --global LogiPluginTool`. Make sure `~/.dotnet/tools` is on `PATH`.
 4. Build from `ClaudeKeysPlugin/`: `dotnet build`. It doesn't copy the plugin: it links Logi's Plugins folder to this repo's `bin/` and reloads it. So the repo must stay where it is.
