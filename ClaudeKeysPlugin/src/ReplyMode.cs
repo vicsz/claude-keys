@@ -20,13 +20,13 @@ namespace Loupedeck.ClaudeKeysPlugin
         private record Reply(String Icon, String Label, String Message, Action<ClientApplication> Run = null);
 
         // Everything here acts on the session on screen. The top row says where what you typed goes: New sends
-        // it to a new session, BTW to a side chat that keeps the thread clean, and Fork to a fork of this one.
+        // it to a new session, Side chat to a side chat that keeps the thread clean, and Fork to a fork of this one.
         // Yes presses the main button of Claude's next-step box, or sends what is typed when there is no box.
         // Slots without a reply stay dark.
         private static readonly IReadOnlyList<Reply> Replies = new[]
         {
             new Reply(KeyArt.NewIcon, "New", null, Run: client => Task.Run(() => ClaudeApp.SendToNewSession(client))),
-            new Reply(KeyArt.BtwIcon, "BTW", null, Run: client => Task.Run(() => ClaudeApp.SendAsSideChat(client))),
+            new Reply(KeyArt.SideChatIcon, "Side chat", null, Run: client => Task.Run(() => ClaudeApp.SendAsSideChat(client))),
             new Reply(KeyArt.ForkIcon, "Fork", null, Run: client => Task.Run(() => ClaudeApp.SendToFork(client))),
             new Reply(KeyArt.CheckIcon, "Yes", null, Run: client => Press(client, VirtualKeyCode.Return, ModifierKey.Command)),
             new Reply(KeyArt.CommitIcon, "Commit", "Let's do a commit"),

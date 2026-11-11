@@ -11,7 +11,7 @@ Codex threads can go on the session keys too, for the times you use both.
 |---|---|---|
 | Session 1–6 | Open that session (Claude or Codex). Empty: pin the session on screen | Pin here, Unpin, Archive (Claude only) |
 | Dictate | Start or stop Claude's mic | — |
-| Return | Press Return: sends, finishes dictation, or queues while Claude works | New (session), BTW (side chat), Fork, Yes, Commit |
+| Return | Press Return: sends, finishes dictation, or queues while Claude works | New (session), Side chat, Fork, Yes, Commit |
 | Cancel | Press Escape: cancels dictation or interrupts Claude | Archive |
 
 Session key colours: blue dots = working, amber = waiting for you, green = finished, grey = idle.
@@ -22,7 +22,7 @@ Codex bubbles point right.
 Holding Return, Cancel or a session key turns the keypad into a page of buttons. The Cancel key closes it,
 and it closes by itself after 10 seconds.
 
-- **Return** acts on the session on screen. New, BTW and Fork take what you've typed or dictated and send it to a
+- **Return** acts on the session on screen. New, Side chat and Fork take what you've typed or dictated and send it to a
   new session, a side chat (`/btw`) or a fork of this one. Yes presses the main button of Claude's next-step box,
   or sends your text when there's no box. Commit sends "Let's do a commit".
 - **Cancel** archives the session on screen.
