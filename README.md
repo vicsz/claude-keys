@@ -1,6 +1,8 @@
 # Claude Keys
 
-**Six agents, nine keys, (almost) no mouse.**
+**Manage your Claude sessions from a Logitech MX Creative Keypad, without reaching for the mouse or keyboard.**
+
+Six agents, nine keys: see who needs you, jump there, dictate, send.
 
 <img src="keypad.svg" width="400" alt="The keypad: a Claude session working on step 3 of 5, one waiting for you, one finished, a Codex thread working, an idle session, an empty key, and Dictate, Return and Cancel">
 
@@ -14,8 +16,7 @@ So I wondered whether I could drop the mouse altogether, and put that loop on ni
 4. **Tap Return.** It sends, and the key's bubble turns blue while Claude works.
 5. Glance down for the next amber key. Hold Return instead to send your words to a new session, a side chat or a fork.
 
-Claude Keys is a plugin for the Logitech MX Creative Keypad and the Claude desktop app on macOS.
-Codex threads can go on the session keys too, for the times you use both.
+It works with the Claude desktop app on macOS. Codex threads can go on the session keys too, for the times you use both.
 
 ## Keys
 
