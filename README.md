@@ -47,16 +47,26 @@ and it closes by itself after 10 seconds.
 You need a Mac, the Claude desktop app, Logi Options+ and an MX Creative Keypad.
 Clone this repo somewhere it can stay: the plugin runs from this folder.
 
+### 1. Build the plugin
+
 **Option A: ask Claude.** Open this folder in Claude Code and say "install this for me". It reads `AGENTS.md`,
-sets up the tools, builds the plugin and tells you which keys to place. Ask it for changes the same way.
+sets up the tools and builds the plugin. Ask it for changes the same way.
 
 **Option B: by hand.**
 
 1. `brew install --cask dotnet-sdk`
 2. `dotnet tool install --global LogiPluginTool`
 3. `cd ClaudeKeysPlugin && dotnet build`
-4. In Logi Options+, drag the Claude Keys actions onto your keypad: Session 1–6, Dictate, Return and Cancel.
-   Put them wherever you like; the picture above is one layout.
+
+### 2. Place the keys
+
+Logi plugins can't ship a ready-made layout (see [Logitech limits](#logitech-limits)), so you drag each key on once:
+
+1. Open Logi Options+ and select your keypad.
+2. Add a new page, or use the first one. Either works.
+3. Open **All actions** and select **Claude Keys**.
+4. Drag **Session 1–6**, **Dictate**, **Return** and **Cancel** onto the keys, wherever you like.
+   The picture above is one layout.
 
 ## Tip: short session names
 
@@ -76,5 +86,14 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
   I just haven't tested it on Windows.
 - Codex support covers the session keys only: they show a thread's status and switch to it.
   Dictate, Return and Cancel act on Claude only, and Archive on a held session key is Claude only.
-- No ready-made layout. Logi plugins can ship a preset profile only for a specific app, and Claude Keys
-  works in every app, so you place the keys yourself.
+
+## Logitech limits
+
+Two things work the way they do because of how Logi's plugin system works:
+
+- **Six separate session keys, not one.** When a key is pressed or drawn, the plugin is only told which action
+  it is, not which key on the keypad. Six copies of one "Session" action would look identical: they'd all show
+  the same session, and a press couldn't tell them apart. So each key is its own action, Session 1 to 6,
+  and each one tracks its own session.
+- **No ready-made layout.** Logi plugins can ship a preset profile only for a specific app. Claude Keys works
+  in every app, so it can't install a layout for you, and you drag the keys on yourself.

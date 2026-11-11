@@ -20,7 +20,7 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 3. If `LogiPluginTool` is missing: `dotnet tool install --global LogiPluginTool`. Make sure `~/.dotnet/tools` is on `PATH`.
 4. Build from `ClaudeKeysPlugin/`: `dotnet build`. It doesn't copy the plugin: it links Logi's Plugins folder to this repo's `bin/` and reloads it. So the repo must stay where it is.
 5. Check the log (path under Build) for a clean load. If keys draw but do nothing in Claude, ask the user to check that Logi Plugin Service is allowed under Privacy & Security > Accessibility.
-6. You can't place keys. Tell the user to drag Session 1–6, Dictate, Return and Cancel onto the keypad in Logi Options+, in any layout.
+6. You can't place keys. Walk the user through "2. Place the keys" in the README.
 7. Offer to add the session-name tip from the README to `~/.claude/CLAUDE.md`. Ask first: it's the user's file.
 8. To uninstall: `dotnet clean` in `ClaudeKeysPlugin/` removes the link.
 
