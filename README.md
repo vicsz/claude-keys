@@ -69,9 +69,11 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 
 ## Limits
 
+- **It reads Claude's and Codex's own files and shortcuts, which are undocumented, so an app update can break a key.**
+- Mac only, for now. A Windows version should be a small change, likely one Claude can make in one go:
+  the Mac-specific parts are mostly in `ClaudeApp.cs`, `ClaudeSessionStore.cs` and `CodexThreads.cs`.
+  I just haven't tested it on Windows.
 - Codex support covers the session keys only: they show a thread's status and switch to it.
   Dictate, Return and Cancel act on Claude only, and Archive on a held session key is Claude only.
 - No ready-made layout. Logi plugins can ship a preset profile only for a specific app, and Claude Keys
   works in every app, so you place the keys yourself.
-- Mac only. It reads Claude's and Codex's own files and shortcuts, which are undocumented,
-  so an app update can break a key.
