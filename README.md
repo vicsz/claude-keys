@@ -24,7 +24,7 @@ It works with the Claude desktop app on macOS. Codex threads can go on the sessi
 |---|---|---|
 | Session 1–6 | Open that session (Claude or Codex). Empty: pin the session on screen | Pin here, Unpin, Archive (Claude only) |
 | Dictate | Start or stop Claude's mic | — |
-| Return | Press Return: sends, finishes dictation, or queues while Claude works | New (session), Side chat, Fork, Yes, Commit |
+| Return | Press Return: sends, or finishes dictation | New (session), Side chat, Fork, Yes, Commit |
 | Cancel | Press Escape: cancels dictation or interrupts Claude | Archive |
 
 Session key colours: blue dots = working, amber = waiting for you, green = finished, grey = idle.
