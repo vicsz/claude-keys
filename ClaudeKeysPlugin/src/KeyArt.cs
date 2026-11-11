@@ -6,7 +6,6 @@ namespace Loupedeck.ClaudeKeysPlugin
 
     public static class KeyArt
     {
-        public const String PlusIcon = "<path d='M12 4v16M4 12h16'/>";
         public const String MicIcon = "<rect x='8.5' y='2' width='7' height='13' rx='3.5'/><path d='M4.5 11.5a7.5 7.5 0 0 0 15 0M12 19v3M8 22h8'/>";
         public const String ReturnIcon = "<path d='M20 4v7a4 4 0 0 1-4 4H4'/><path d='M9 10l-5 5 5 5'/>";
         public const String CheckIcon = "<path d='M4.5 12.5l5 5 10-11'/>";
