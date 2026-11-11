@@ -1,6 +1,6 @@
 # Claude Keys: agent notes
 
-C# Logi Actions plugin for the MX Keypad (3×3 keys, 2 page buttons). Read this before changing code.
+C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). Read this before changing code.
 
 ## Rules
 - Keep it minimal: no generated, optional or sample files.
@@ -13,6 +13,16 @@ C# Logi Actions plugin for the MX Keypad (3×3 keys, 2 page buttons). Read this 
 - Build from `ClaudeKeysPlugin/` only: `dotnet build`. It reloads the plugin itself. Expect 0 warnings.
 - Never build from `src/`. It creates `src/obj` and breaks the next build. Delete `src/obj` to fix it.
 - Log: `~/Library/Application Support/Logi/LogiPluginService/Logs/plugin_logs/ClaudeKeys.log`
+
+## Installing for a user
+1. Check the basics: macOS, the Claude desktop app, and Logi Options+ with the keypad connected. If one is missing, stop and tell the user.
+2. `dotnet --version` must be 10 or later. If not: `brew install --cask dotnet-sdk`.
+3. If `LogiPluginTool` is missing: `dotnet tool install --global LogiPluginTool`. Make sure `~/.dotnet/tools` is on `PATH`.
+4. Build from `ClaudeKeysPlugin/`: `dotnet build`. It doesn't copy the plugin: it links Logi's Plugins folder to this repo's `bin/` and reloads it. So the repo must stay where it is.
+5. Check the log (path under Build) for a clean load. If keys draw but do nothing in Claude, ask the user to check that Logi Plugin Service is allowed under Privacy & Security > Accessibility.
+6. You can't place keys. Tell the user to drag Session 1–6, Dictate, Return and Cancel onto the keypad in Logi Options+, in any layout.
+7. Offer to add the session-name tip from the README to `~/.claude/CLAUDE.md`. Ask first: it's the user's file.
+8. To uninstall: `dotnet clean` in `ClaudeKeysPlugin/` removes the link.
 
 ## Code map (`ClaudeKeysPlugin/src/`)
 - `ClaudeSessionStore.cs`: reads every session's status every 2 seconds. All Claude file knowledge stays here.

@@ -1,8 +1,20 @@
 # Claude Keys
 
+**Six agents, nine keys, (almost) no mouse.**
+
 <img src="keypad.svg" width="400" alt="The keypad: a Claude session working on step 3 of 5, one waiting for you, one finished, a Codex thread working, an idle session, an empty key, and Dictate, Return and Cancel">
 
-A Logitech MX Keypad plugin for the Claude desktop app on macOS. It shows your Claude sessions on the keypad and drives them.
+I've moved fully to dictation: most of my agent work is done by voice now. Typing went away, but the mouse didn't.
+My day became one loop: find the session that needs me, click into it, dictate, send, find the next one.
+So I wondered whether I could drop the mouse altogether, and put that loop on nine keys.
+
+1. A key turns **amber**: that session is waiting for you.
+2. **Tap it.** Claude jumps straight to it.
+3. **Tap Dictate** and talk.
+4. **Tap Return.** It sends, and the key turns blue while Claude works.
+5. Glance down for the next amber key. Hold Return instead to send your words to a new session, a side chat or a fork.
+
+Claude Keys is a plugin for the Logitech MX Creative Keypad and the Claude desktop app on macOS.
 Codex threads can go on the session keys too, for the times you use both.
 
 ## Keys
@@ -30,6 +42,14 @@ and it closes by itself after 10 seconds.
   archives that key's session.
 
 ## Install
+
+You need a Mac, the Claude desktop app, Logi Options+ and an MX Creative Keypad.
+Clone this repo somewhere it can stay: the plugin runs from this folder.
+
+**Option A: ask Claude.** Open this folder in Claude Code and say "install this for me". It reads `AGENTS.md`,
+sets up the tools, builds the plugin and tells you which keys to place. Ask it for changes the same way.
+
+**Option B: by hand.**
 
 1. `brew install --cask dotnet-sdk`
 2. `dotnet tool install --global LogiPluginTool`
