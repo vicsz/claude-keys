@@ -9,14 +9,14 @@ namespace Loupedeck.ClaudeKeysPlugin
         public const String PlusIcon = "<path d='M12 4v16M4 12h16'/>";
         public const String MicIcon = "<rect x='8.5' y='2' width='7' height='13' rx='3.5'/><path d='M4.5 11.5a7.5 7.5 0 0 0 15 0M12 19v3M8 22h8'/>";
         public const String SendIcon = "<path d='M3 3l18 9-18 9 3.5-9z'/><path d='M6.5 12H13'/>";
-        public const String StopIcon = "<rect x='4.5' y='4.5' width='15' height='15' rx='2.5'/>";
+        public const String ReturnIcon = "<path d='M20 4v7a4 4 0 0 1-4 4H4'/><path d='M9 10l-5 5 5 5'/>";
         public const String CheckIcon = "<path d='M4.5 12.5l5 5 10-11'/>";
         public const String CommitIcon = "<circle cx='12' cy='12' r='4'/><path d='M2 12h6M16 12h6'/>";
         public const String PinIcon = "<path d='M12 16v6M8 2.5h8l-1 7.5 4 5H5l4-5z'/>";
         public const String PinHereIcon = PinIcon + "<path d='M20.5 2v5M18 4.5h5'/>";
         public const String UnpinIcon = PinIcon + "<path d='M3 3l18 18'/>";
 
-        // Go's paper plane with a mark in the corner for where it goes: a plus for a new session, a speech
+        // A paper plane with a mark in the corner for where it goes: a plus for a new session, a speech
         // bubble for a side chat, a branch for a fork.
         public const String BtwIcon = SendIcon + "<path d='M16.5 1.5h6a1 1 0 0 1 1 1V6a1 1 0 0 1-1 1H19l-2 1.8V7h-.5a1 1 0 0 1-1-1V2.5a1 1 0 0 1 1-1z'/>";
         public const String NewIcon = SendIcon + "<path d='M20.5 2v5M18 4.5h5'/>";

@@ -19,7 +19,7 @@ C# Logi Actions plugin for the MX Keypad (3×3 keys, 2 page buttons). Read this 
 - `CodexThreads.cs`: the same for Codex. All Codex file knowledge stays here.
 - `ClaudeTranscripts.cs`: step count (2/4) for busy sessions, from their task list.
 - `ClaudeApp.cs`: everything that acts on the Claude window (links, shortcuts, paste, palette).
-- `ReplyMode.cs`: the hold pages for Go, Stop and Session keys.
+- `ReplyMode.cs`: the hold pages for Return, Cancel and Session keys.
 - `KeyArt.cs`: draws every key.
 - `SessionKeyLocks.cs`: saves which session is on which key.
 - `Actions/`: one file per key.

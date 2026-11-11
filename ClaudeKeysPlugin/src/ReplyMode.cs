@@ -5,7 +5,7 @@ namespace Loupedeck.ClaudeKeysPlugin
     using System.Threading;
     using System.Threading.Tasks;
 
-    // Holding Go turns the whole keypad into quick replies, and holding Stop into ways to end the session. Every key is ours, so each one
+    // Holding Return turns the whole keypad into quick replies, and holding Cancel into ways to end the session. Every key is ours, so each one
     // redraws itself as a reply and acts as one, then goes back to normal.
     // Slots run left to right, top to bottom, and match the key layout.
 

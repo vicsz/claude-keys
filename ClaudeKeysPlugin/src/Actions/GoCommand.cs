@@ -2,14 +2,14 @@ namespace Loupedeck.ClaudeKeysPlugin
 {
     using System;
 
-    // Tap sends what is in the message box by pressing Enter. Hold opens the quick reply page.
+    // Tap presses Return: it sends, finishes dictation, or queues while Claude works. Hold opens the quick reply page.
 
     public class GoCommand : ClaudeShortcutCommand
     {
         private Boolean _held;
 
         public GoCommand()
-            : base("Go", "Tap to press Enter in Claude. Hold for quick replies", KeyArt.SendIcon, replySlot: 7)
+            : base("Return", "Tap to press Return in Claude: sends, finishes dictation, or queues while Claude works. Hold for quick replies", KeyArt.ReturnIcon, replySlot: 7)
         {
         }
 
