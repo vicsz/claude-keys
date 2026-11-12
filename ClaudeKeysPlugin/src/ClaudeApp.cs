@@ -17,17 +17,30 @@ namespace Loupedeck.ClaudeKeysPlugin
         private const Int32 ForkDelayMilliseconds = 1500;
 
         private static readonly Regex ValidBridgeId = new Regex("^session_[A-Za-z0-9]+$");
+        private static readonly Regex ValidLocalId = new Regex("^local_[A-Za-z0-9-]{1,64}$");
 
-        public static void OpenSession(String bridgeId)
+        // Bridge IDs exist only while Remote Control is on, so the local link is the fallback.
+        public static void OpenSession(String bridgeId, String localId)
         {
-            if (bridgeId == null || !ValidBridgeId.IsMatch(bridgeId))
+            String link;
+
+            if (bridgeId != null && ValidBridgeId.IsMatch(bridgeId))
             {
+                link = $"claude://claude.ai/code/{bridgeId}";
+            }
+            else if (localId != null && ValidLocalId.IsMatch(localId))
+            {
+                link = $"claude://code/continue?session={localId}&source=desktop_action";
+            }
+            else
+            {
+                PluginLog.Warning($"No usable ID to open the session: {localId}");
                 return;
             }
 
             try
             {
-                Run("/usr/bin/open", null, $"claude://claude.ai/code/{bridgeId}");
+                Run("/usr/bin/open", null, link);
             }
             catch (Exception ex)
             {

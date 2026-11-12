@@ -41,6 +41,8 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 - `~/Library/Application Support/Claude/claude-code-sessions/*/*/local_*.json`: `title`, `isStarred`, `isArchived`, `bridgeSessionIds`, `lastFocusedAt`. `btwLoweredFrom` marks a side chat.
 - `~/Library/Logs/Claude/main.log`: `setFocusedSession` shows the open session instantly. The JSON files lag about a second.
 - Links: `claude://claude.ai/code/<bridgeSessionId>` opens a session, `claude://code/new?source=desktop_action` starts one.
+  Bridge IDs exist only with Remote Control on (it can be disabled by policy), so without one the plugin opens
+  `claude://code/continue?session=<local_id>&source=desktop_action`.
 - Shortcuts: Dictate `Cmd+D`, Accept `Cmd+Return`, Fork `Cmd+Opt+O`, Archive `Cmd+Opt+A`. `/btw <text>` opens a side chat, and dictation doesn't work inside one.
 
 ## Codex (undocumented)

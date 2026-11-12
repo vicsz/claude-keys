@@ -96,7 +96,7 @@ namespace Loupedeck.ClaudeKeysPlugin
                 }
                 else
                 {
-                    ClaudeApp.OpenSession(session.BridgeId);
+                    ClaudeApp.OpenSession(session.BridgeId, session.Id);
                 }
 
                 this.Sessions.MarkSeen(session.Id);
@@ -158,7 +158,7 @@ namespace Loupedeck.ClaudeKeysPlugin
 
             if (!IsOnScreen())
             {
-                ClaudeApp.OpenSession(session.BridgeId);
+                ClaudeApp.OpenSession(session.BridgeId, session.Id);
                 var deadline = DateTime.UtcNow.AddMilliseconds(ArchiveSwitchLimitMilliseconds);
 
                 while (!IsOnScreen())
