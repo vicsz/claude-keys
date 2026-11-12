@@ -45,14 +45,18 @@ and it closes by itself after 10 seconds.
 ## Install
 
 You need a Mac, the Claude desktop app, Logi Options+ (signed in to a Logi account) and an MX Creative Keypad.
-Clone this repo somewhere it can stay: the plugin runs from this folder.
 
-### 1. Build the plugin
+### 1. Get the plugin
 
-**Option A: ask Claude.** Open this folder in Claude Code and say "install this for me". It reads `AGENTS.md`,
+**Option A: download it.** Download the `.lplug4` file from the [latest release](https://github.com/vicsz/claude-keys/releases/latest)
+and double-click it. Logi Options+ installs it.
+
+To build it yourself instead, clone this repo somewhere it can stay: a built plugin runs from this folder.
+
+**Option B: ask Claude.** Open this folder in Claude Code and say "install this for me". It reads `AGENTS.md`,
 sets up the tools and builds the plugin. Ask it for changes the same way.
 
-**Option B: by hand.**
+**Option C: by hand.**
 
 1. `brew install --cask dotnet-sdk`
 2. `dotnet tool install --global LogiPluginTool`

@@ -1,0 +1,42 @@
+# Actions > Make release > Run workflow. Releases the version in LoupedeckPackage.yaml,
+# then bumps it for next time. Nothing is bumped if any step fails.
+name: Make release
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_FILE: ClaudeKeysPlugin/src/package/metadata/LoupedeckPackage.yaml
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build, pack and verify
+        run: |
+          VERSION=$(sed -n 's/^version: *//p' "$PACKAGE_FILE")
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "PLUGIN=ClaudeKeys_${VERSION//./_}.lplug4" >> "$GITHUB_ENV"
+          (cd ClaudeKeysPlugin && dotnet build -c Release)
+          dotnet tool install --global LogiPluginTool
+          ~/.dotnet/tools/logiplugintool pack ClaudeKeysPlugin/bin/Release/ "ClaudeKeys_${VERSION//./_}.lplug4"
+          ~/.dotnet/tools/logiplugintool verify "ClaudeKeys_${VERSION//./_}.lplug4"
+
+      - name: Publish the release
+        run: gh release create "v$VERSION" "$PLUGIN" --title "v$VERSION" --generate-notes
+
+      - name: Bump the version
+        run: |
+          sed -i "s/^version: .*/version: ${VERSION%.*}.$(( ${VERSION##*.} + 1 ))/" "$PACKAGE_FILE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump version"
+          git push
