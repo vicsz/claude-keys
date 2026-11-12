@@ -41,6 +41,7 @@ namespace Loupedeck.ClaudeKeysPlugin
 
         private List<Row> _rows;
         private DateTime _databaseWritten;
+        private String _lastError;
 
         // Null until the thread list has been read once, so a failed first read never looks like no threads.
         public IReadOnlyList<CodexThread> Read()
@@ -113,11 +114,22 @@ namespace Loupedeck.ClaudeKeysPlugin
                     .Select(t => new Row(GetString(t, "id"), ToName(GetString(t, "name"), GetString(t, "title")), GetString(t, "rollout_path"), t.GetProperty("recency_at_ms").GetInt64()))
                     .ToList();
                 this._databaseWritten = written;
+
+                if (this._lastError != null)
+                {
+                    PluginLog.Info("Codex threads are readable again");
+                    this._lastError = null;
+                }
             }
             catch (Exception ex) when (ex is JsonException || ex is InvalidOperationException || ex is KeyNotFoundException || ex is System.ComponentModel.Win32Exception)
             {
                 // Codex was mid-write. Keep the list we had and read it again next time.
-                PluginLog.Warning(ex, "Could not read Codex threads");
+                // This retries every poll, so each distinct error is logged once.
+                if (ex.Message != this._lastError)
+                {
+                    PluginLog.Warning(ex, "Could not read Codex threads");
+                    this._lastError = ex.Message;
+                }
             }
         }
 
@@ -243,7 +255,11 @@ namespace Loupedeck.ClaudeKeysPlugin
                 RedirectStandardError = true,
             };
 
-            foreach (var argument in new[] { "-readonly", "-json", "-cmd", ".timeout 1000", Database, query })
+            // When Codex is idle it closes the database and SQLite deletes -wal and -shm. A read-only reader can't
+            // recreate them (error 14), but with nothing open there's nothing in flight, so read the file as is.
+            var target = File.Exists(Database + "-shm") ? Database : new Uri(Database).AbsoluteUri + "?immutable=1";
+
+            foreach (var argument in new[] { "-readonly", "-json", "-cmd", ".timeout 1000", target, query })
             {
                 start.ArgumentList.Add(argument);
             }
