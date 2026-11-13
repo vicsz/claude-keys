@@ -87,11 +87,25 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 - **It reads Claude's and Codex's own files and shortcuts, which are undocumented, so an app update can break a key.**
 - Session keys work with Claude Code sessions and Codex threads, not regular chats. Neither app saves which Claude
   or ChatGPT chat is open, or whether it's working, anywhere the plugin can read.
+- Cursor isn't supported. Its chats and their status could be read, but no link opens a specific local chat,
+  so a key could show a Cursor chat but not take you there.
 - Mac only, for now. A Windows version should be a small change, likely one Claude can make in one go:
   the Mac-specific parts are mostly in `ClaudeApp.cs`, `ClaudeSessionStore.cs` and `CodexThreads.cs`.
   I just haven't tested it on Windows.
 - Codex support covers the session keys only: they show a thread's status and switch to it.
   Dictate, Return and Cancel act on Claude only, and Archive on a held session key is Claude only.
+
+## Why not hooks?
+
+Claude Code, Codex and Cursor all support hooks: scripts that run when an agent starts, stops or needs you.
+Hooks are documented, so they'd break less often than reading the apps' own files does.
+
+Claude Keys skips them because they need setting up on every machine, and for every app. As it is, it works as
+soon as it's installed, with nothing to configure. The trade-off is the bold point under Limits: an app update
+can break a key.
+
+Hooks could still add to it later, as a steadier status source for anyone willing to set them up, or as the
+way to support an app like Cursor, whose files don't say enough.
 
 ## Logitech limitations
 
