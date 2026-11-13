@@ -85,6 +85,8 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 ## Limits
 
 - **It reads Claude's and Codex's own files and shortcuts, which are undocumented, so an app update can break a key.**
+- Session keys work with Claude Code sessions and Codex threads, not regular chats. Neither app saves which Claude
+  or ChatGPT chat is open, or whether it's working, anywhere the plugin can read.
 - Mac only, for now. A Windows version should be a small change, likely one Claude can make in one go:
   the Mac-specific parts are mostly in `ClaudeApp.cs`, `ClaudeSessionStore.cs` and `CodexThreads.cs`.
   I just haven't tested it on Windows.
