@@ -105,3 +105,12 @@ Three things work the way they do because of how Logi's plugin system works:
   in every app, so it can't install a layout for you, and you drag the keys on yourself.
 - **You need a Logi account.** Logi Options+ only lets you add plugins while you're signed in, so create a free
   account first. It's an odd requirement for a local plugin, but there's no way around it.
+
+## Stream Deck
+
+Elgato's Stream Deck could do this too, and in many ways it's more powerful. It comes with more keys
+(up to 32), and its plugin system avoids two of the limits above: each key knows which one it is, and
+plugins can ship a layout.
+
+The Logitech advantage: Logi Options+ is often already approved on work laptops, and Stream Deck's software
+often isn't.
