@@ -39,6 +39,16 @@ namespace Loupedeck.ClaudeKeysPlugin
 
         private record Row(String Id, String Name, String RolloutPath, Int64 RecencyMs);
 
+        // How far each transcript has been read, and the turn's state at that point.
+        private sealed class Turn
+        {
+            public Int64 Offset;
+            public SessionStatus Status = SessionStatus.Idle;
+            public String PendingInput;
+        }
+
+        private readonly Dictionary<String, Turn> _turns = new();
+
         private List<Row> _rows;
         private DateTime _databaseWritten;
         private String _lastError;
@@ -54,7 +64,7 @@ namespace Loupedeck.ClaudeKeysPlugin
             }
 
             var running = IsRunning();
-            return this._rows.Select(r => new CodexThread(r.Id, r.Name, running ? ReadStatus(r.RolloutPath) : SessionStatus.NotRunning, r.RecencyMs)).ToList();
+            return this._rows.Select(r => new CodexThread(r.Id, r.Name, running ? this.ReadStatus(r.RolloutPath) : SessionStatus.NotRunning, r.RecencyMs)).ToList();
         }
 
         public static void Open(String id)
@@ -141,7 +151,7 @@ namespace Loupedeck.ClaudeKeysPlugin
         }
 
         // A turn starts and then completes or is stopped. In between, a request for your input means it is waiting.
-        private static SessionStatus ReadStatus(String path)
+        private SessionStatus ReadStatus(String path)
         {
             try
             {
@@ -149,75 +159,124 @@ namespace Loupedeck.ClaudeKeysPlugin
 
                 if (!info.Exists || DateTime.UtcNow - info.LastWriteTimeUtc > ActiveLimit)
                 {
+                    this._turns.Remove(path);
                     return SessionStatus.Idle;
                 }
 
-                var status = SessionStatus.Idle;
-                String pendingInput = null;
-
-                foreach (var line in ReadCurrentTurn(path))
+                // Only what Codex added since the last poll is read. A file that shrank, or grew too much
+                // while unread, is scanned again from its end.
+                if (!this._turns.TryGetValue(path, out var turn) || info.Length < turn.Offset || info.Length - turn.Offset > MaxTurnBytes)
                 {
-                    if (!line.Contains("task_") && !line.Contains("turn_aborted") && !line.Contains("function_call"))
+                    turn = ScanTurn(path);
+                    this._turns[path] = turn;
+                }
+                else if (info.Length > turn.Offset)
+                {
+                    foreach (var line in ReadLines(path, turn.Offset, false, out turn.Offset))
                     {
-                        continue;
-                    }
-
-                    using var json = JsonDocument.Parse(line);
-
-                    if (!json.RootElement.TryGetProperty("payload", out var payload))
-                    {
-                        continue;
-                    }
-
-                    switch (GetString(payload, "type"))
-                    {
-                        case "task_started":
-                            status = SessionStatus.Busy;
-                            break;
-                        case "task_complete":
-                        case "turn_aborted":
-                            status = SessionStatus.Idle;
-                            pendingInput = null;
-                            break;
-                        case "function_call" when GetString(payload, "name")?.StartsWith("request_user_input") == true:
-                            pendingInput = GetString(payload, "call_id");
-                            break;
-                        case "function_call_output" when pendingInput != null && GetString(payload, "call_id") == pendingInput:
-                            pendingInput = null;
-                            break;
+                        Apply(turn, line);
                     }
                 }
 
-                if (status == SessionStatus.Busy && pendingInput != null)
+                if (turn.Status == SessionStatus.Busy && turn.PendingInput != null)
                 {
                     return SessionStatus.Waiting;
                 }
 
-                return status == SessionStatus.Busy && DateTime.UtcNow - info.LastWriteTimeUtc > BusyQuietLimit ? SessionStatus.Idle : status;
+                return turn.Status == SessionStatus.Busy && DateTime.UtcNow - info.LastWriteTimeUtc > BusyQuietLimit ? SessionStatus.Idle : turn.Status;
             }
-            catch (Exception ex) when (ex is IOException || ex is JsonException)
+            catch (IOException)
             {
                 return SessionStatus.Idle;
             }
         }
 
-        // Every step Codex takes is logged at length, so a long turn can start well before the tail.
-        // Reads further back until the tail holds the turn's start or end.
-        private static IReadOnlyList<String> ReadCurrentTurn(String path)
+        // Every step Codex takes is logged at length, and a generated image is a 6 MB line, so a turn can start
+        // far before the end. Reads further back until it finds the turn's start or end. With neither in the
+        // last 16 MB, the turn is still running: a finished one ends with its task_complete.
+        private static Turn ScanTurn(String path)
         {
-            for (var bytes = TailBytes; ; bytes *= 4)
-            {
-                var lines = ReadTail(path, bytes);
+            var length = new FileInfo(path).Length;
 
-                if (bytes >= MaxTurnBytes || lines.Any(IsTurnEdge) || new FileInfo(path).Length <= bytes)
+            for (var bytes = (Int64)TailBytes; ; bytes *= 4)
+            {
+                var start = Math.Max(0, length - bytes);
+                var lines = ReadLines(path, start, start > 0, out var end);
+                var hasEdge = lines.Any(IsTurnEdge);
+
+                if (hasEdge || start == 0 || bytes >= MaxTurnBytes)
                 {
-                    return lines;
+                    var turn = new Turn { Offset = end, Status = hasEdge || start == 0 ? SessionStatus.Idle : SessionStatus.Busy };
+
+                    foreach (var line in lines)
+                    {
+                        Apply(turn, line);
+                    }
+
+                    return turn;
                 }
+            }
+        }
+
+        private static void Apply(Turn turn, String line)
+        {
+            if (!line.Contains("task_") && !line.Contains("turn_aborted") && !line.Contains("function_call"))
+            {
+                return;
+            }
+
+            try
+            {
+                using var json = JsonDocument.Parse(line);
+
+                if (!json.RootElement.TryGetProperty("payload", out var payload))
+                {
+                    return;
+                }
+
+                switch (GetString(payload, "type"))
+                {
+                    case "task_started":
+                        turn.Status = SessionStatus.Busy;
+                        break;
+                    case "task_complete":
+                    case "turn_aborted":
+                        turn.Status = SessionStatus.Idle;
+                        turn.PendingInput = null;
+                        break;
+                    case "function_call" when GetString(payload, "name")?.StartsWith("request_user_input") == true:
+                        turn.PendingInput = GetString(payload, "call_id");
+                        break;
+                    case "function_call_output" when turn.PendingInput != null && GetString(payload, "call_id") == turn.PendingInput:
+                        turn.PendingInput = null;
+                        break;
+                }
+            }
+            catch (JsonException)
+            {
+                // Not an event line. Skip it.
             }
         }
 
         private static Boolean IsTurnEdge(String line) =>
             line.Contains("\"task_started\"") || line.Contains("\"task_complete\"") || line.Contains("\"turn_aborted\"");
+
+        // Whole lines from start to the last newline. end is where the next read starts, so a half-written last
+        // line is read again next time. Starting mid-file, the first line is cut off and skipped.
+        private static List<String> ReadLines(String path, Int64 start, Boolean skipFirst, out Int64 end)
+        {
+            using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var bytes = new Byte[file.Length - start];
+
+            file.Seek(start, SeekOrigin.Begin);
+            file.ReadExactly(bytes);
+
+            var complete = Array.LastIndexOf(bytes, (Byte)'\n') + 1;
+            end = start + complete;
+
+            var lines = Encoding.UTF8.GetString(bytes, 0, complete).Split('\n').Where(l => l.Length > 0);
+            return (skipFirst ? lines.Skip(1) : lines).ToList();
+        }
 
         // Whole lines only. The first one may be cut off by the tail, and the last one may be half written.
         private static IReadOnlyList<String> ReadTail(String path, Int32 tailBytes = TailBytes)
