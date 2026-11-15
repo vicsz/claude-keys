@@ -106,6 +106,8 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
   the Mac-specific parts are mostly in `ClaudeApp.cs`, `ClaudeSessionStore.cs` and `CodexThreads.cs`.
   I just haven't tested it on Windows.
 - Codex support covers the session keys, Return and Cancel. The hold pages and Archive are Claude only.
+- The dictation shortcuts are fixed (`Cmd+D` in Claude, `Ctrl+Opt+Cmd+D` elsewhere). Choosing them in
+  Logi Options+ is possible, but not built yet.
 
 ## Why not hooks?
 
