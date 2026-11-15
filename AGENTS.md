@@ -48,6 +48,7 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 ## Codex (undocumented)
 - Threads: `~/.codex/state_5.sqlite`. Logs: `~/Library/Logs/com.openai.codex`.
 - Open a thread: `codex://threads/<id>`.
+- Dictation outside Claude: ChatGPT's single-tap shortcut, which the user sets to `Ctrl+Opt+Cmd+D`. Never hold a modifier key down from the plugin: a lost key-up left Control stuck system-wide (2026-11-15).
 
 ## Logi SDK gotchas
 - Keys are 116×116. `IsWidget = true` removes the caption so the image fills the key.

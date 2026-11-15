@@ -2,16 +2,18 @@ namespace Loupedeck.ClaudeKeysPlugin
 {
     using System;
 
-    // Tap presses Return: it sends, or finishes dictation. Hold opens the quick reply page.
+    // Tap presses Return in whatever app is in front: it sends, or finishes dictation. Hold opens the quick reply page.
 
     public class GoCommand : ClaudeShortcutCommand
     {
         private Boolean _held;
 
         public GoCommand()
-            : base("Return", "Tap to press Return in Claude: sends, or finishes dictation. Hold for quick replies", KeyArt.ReturnIcon, replySlot: 7)
+            : base("Return", "Tap to press Return in the app in front: sends, or finishes dictation. Hold for quick replies in Claude", KeyArt.ReturnIcon, replySlot: 7)
         {
         }
+
+        protected override Boolean SwitchesToClaude => false;
 
         protected override void SendShortcut() =>
             this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Return);

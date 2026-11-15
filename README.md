@@ -16,16 +16,17 @@ So I wondered whether I could drop the mouse altogether, and put that loop on ni
 4. **Tap Return.** It sends, and the key's bubble turns blue while Claude works.
 5. Glance down for the next amber key. Hold Return instead to send your words to a new session, a side chat or a fork.
 
-It works with the Claude desktop app on macOS. Codex threads can go on the session keys too, for the times you use both.
+It works with the Claude desktop app on macOS. Codex threads can go on the session keys too, and Dictate,
+Return and Cancel work in any app.
 
 ## Keys
 
 | Key | Tap | Hold |
 |---|---|---|
 | Session 1–6 | Open that session (Claude or Codex). Empty: pin the session on screen | Pin here, Unpin, Archive (Claude only) |
-| Dictate | Start or stop Claude's mic | — |
-| Return | Press Return: sends, or finishes dictation | New (session), Side chat, Fork, Yes, Commit |
-| Cancel | Press Escape: cancels dictation or interrupts Claude | Archive |
+| Dictate | Start or stop dictation in the app in front: Claude's mic in Claude, ChatGPT's dictation anywhere else | — |
+| Return | Press Return in the app in front: sends, or finishes dictation | New (session), Side chat, Fork, Yes, Commit |
+| Cancel | Press Escape in the app in front: cancels dictation or interrupts | Archive |
 
 Session key colours: blue dots = working, amber = waiting for you, green = finished, grey = idle.
 Codex bubbles point right.
@@ -72,6 +73,18 @@ Logi plugins can't ship a ready-made layout (see [Logitech limitations](#logitec
 4. Drag **Session 1–6**, **Dictate**, **Return** and **Cancel** onto the keys, wherever you like.
    The picture above is one layout.
 
+### 3. Set the dictation shortcuts
+
+Dictate presses one shortcut in Claude and another everywhere else:
+
+| App | Setting | Set it to |
+|---|---|---|
+| Claude | Dictation shortcut | `Cmd+D` (the default) |
+| ChatGPT (Codex) | Dictation → **Single-tap shortcut** | `Ctrl+Opt+Cmd+D` |
+
+The ChatGPT one works in any app, so Dictate can type into Codex, Messages, Slack or anywhere else.
+Skip it if you only use Claude.
+
 ## Tip: short session names
 
 Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit on a key:
@@ -92,8 +105,7 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 - Mac only, for now. A Windows version should be a small change, likely one Claude can make in one go:
   the Mac-specific parts are mostly in `ClaudeApp.cs`, `ClaudeSessionStore.cs` and `CodexThreads.cs`.
   I just haven't tested it on Windows.
-- Codex support covers the session keys only: they show a thread's status and switch to it.
-  Dictate, Return and Cancel act on Claude only, and Archive on a held session key is Claude only.
+- Codex support covers the session keys, Return and Cancel. The hold pages and Archive are Claude only.
 
 ## Why not hooks?
 

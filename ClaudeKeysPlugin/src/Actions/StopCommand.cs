@@ -2,16 +2,18 @@ namespace Loupedeck.ClaudeKeysPlugin
 {
     using System;
 
-    // Tap cancels by pressing Escape: it stops dictation or a running turn. Hold for ways to end the session, such as Archive.
+    // Tap presses Escape in whatever app is in front: it stops dictation or a running turn. Hold for ways to end the session, such as Archive.
 
     public class StopCommand : ClaudeShortcutCommand
     {
         private Boolean _held;
 
         public StopCommand()
-            : base("Cancel", "Tap to cancel in Claude (Escape): stops dictation or a running turn. Hold to archive the session", KeyArt.CancelIcon, replySlot: 8)
+            : base("Cancel", "Tap to press Escape in the app in front: stops dictation or a running turn. Hold to archive the Claude session", KeyArt.CancelIcon, replySlot: 8)
         {
         }
+
+        protected override Boolean SwitchesToClaude => false;
 
         protected override void SendShortcut() =>
             this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Escape);

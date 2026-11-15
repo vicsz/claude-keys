@@ -3,8 +3,9 @@ namespace Loupedeck.ClaudeKeysPlugin
     using System;
     using System.Threading.Tasks;
 
-    // A key that presses one keyboard shortcut in Claude.
-    // These keys mean something else in other apps, so they are only sent when Claude is in front.
+    // A key that presses one keyboard shortcut.
+    // Most shortcuts mean something else in other apps, so they bring Claude to the front first.
+    // Keys that should act in whatever app is in front set SwitchesToClaude to false.
 
     public abstract class ClaudeShortcutCommand : PluginDynamicCommand
     {
@@ -25,6 +26,8 @@ namespace Loupedeck.ClaudeKeysPlugin
         }
 
         protected abstract void SendShortcut();
+
+        protected virtual Boolean SwitchesToClaude => true;
 
         protected override Boolean OnLoad()
         {
@@ -65,7 +68,7 @@ namespace Loupedeck.ClaudeKeysPlugin
         {
             try
             {
-                if (!ClaudeApp.BringToFront())
+                if (this.SwitchesToClaude && !ClaudeApp.BringToFront())
                 {
                     PluginLog.Warning($"Claude did not come to the front, so {this._label} was not sent");
                     return;
