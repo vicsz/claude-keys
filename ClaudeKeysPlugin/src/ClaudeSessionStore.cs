@@ -201,7 +201,7 @@ namespace Loupedeck.ClaudeKeysPlugin
                 .GroupBy(f => f.ParentId)
                 .ToDictionary(g => g.Key, g => g.Select(f => ToStatus(live.GetValueOrDefault(f.Id))).ToList());
 
-        // A child waiting for you turns the parent amber.
+        // A child waiting for you turns the parent amber. A working child shows on an idle parent as background work.
         private static SessionStatus RollUp(SessionStatus own, List<SessionStatus> children)
         {
             if (own == SessionStatus.Busy || own == SessionStatus.Waiting)
@@ -212,6 +212,11 @@ namespace Loupedeck.ClaudeKeysPlugin
             if (children?.Contains(SessionStatus.Waiting) == true)
             {
                 return SessionStatus.Waiting;
+            }
+
+            if (own == SessionStatus.Idle && children?.Contains(SessionStatus.Busy) == true)
+            {
+                return SessionStatus.Background;
             }
 
             return own;
