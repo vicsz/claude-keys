@@ -41,11 +41,9 @@ pluginFolderMac: bin
 
 # List of devices the plugin is optimized for.
 supportedDevices:
-    # LoupedeckCtFamily covers the following devices: Loupedeck CT, Live and Live S.
-    - LoupedeckCtFamily
-
-    # LoupedeckPlusFamily covers Loupedeck+ device. Uncomment the following line to support Loupedeck+.
-    #- LoupedeckPlusFamily
+    # LogitechCreativeFamily covers the MX Creative Console: the MX Creative Keypad and Dialpad.
+    # Built and tested on the MX Creative Keypad.
+    - LogitechCreativeFamily
 
 # List of plugin capabilities.
 pluginCapabilities:
