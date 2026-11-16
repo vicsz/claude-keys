@@ -9,8 +9,7 @@ namespace Loupedeck.ClaudeKeysPlugin
     // redraws itself as a reply and acts as one, then goes back to normal.
     // Slots run left to right, top to bottom, and match the key layout.
 
-    // Archive is null for sessions it can't archive, and then its key stays dark.
-    public record SessionKeyActions(Action PinCurrent, Action Unpin, Action Archive = null);
+    public record SessionKeyActions(Action PinCurrent, Action Unpin);
 
     public static class ReplyMode
     {
@@ -53,11 +52,6 @@ namespace Loupedeck.ClaudeKeysPlugin
 
             replies[0] = new Reply(KeyArt.PinHereIcon, "Pin here", null, Run: _ => actions.PinCurrent());
             replies[1] = new Reply(KeyArt.UnpinIcon, "Unpin", null, Run: _ => actions.Unpin());
-
-            if (actions.Archive != null)
-            {
-                replies[2] = new Reply(KeyArt.ArchiveIcon, "Archive", null, Run: _ => Task.Run(actions.Archive));
-            }
 
             replies[CancelSlot] = Replies[CancelSlot];
             Open(replies);

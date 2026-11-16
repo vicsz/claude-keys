@@ -23,7 +23,7 @@ Return and Cancel work in any app.
 
 | Key | Tap | Hold |
 |---|---|---|
-| Session 1–6 | Open that session (Claude or Codex). Empty: pin the session on screen | Pin here, Unpin, Archive (Claude only) |
+| Session 1–6 | Open that session (Claude or Codex). Empty: pin the session on screen | Pin here, Unpin |
 | Dictate | Start or stop dictation in the app in front: Claude's mic in Claude, ChatGPT's dictation anywhere else | — |
 | Return | Press Return in the app in front: sends, or finishes dictation | New (session), Side chat, Fork, Yes, Commit |
 | Cancel | Press Escape in the app in front: cancels dictation or interrupts | Archive |
@@ -40,8 +40,8 @@ and it closes by itself after 10 seconds.
   new session, a side chat (`/btw`) or a fork of this one. Yes presses the main button of Claude's next-step box,
   or sends your text when there's no box. Commit sends "Let's do a commit".
 - **Cancel** archives the session on screen.
-- **A session key**: Pin here puts the session on screen on that key, Unpin empties the key, and Archive
-  archives that key's session.
+- **A session key**: Pin here puts the session on screen on that key, and Unpin empties the key.
+  To archive a key's session, tap the key to open it, then hold Cancel.
 
 ## Install
 

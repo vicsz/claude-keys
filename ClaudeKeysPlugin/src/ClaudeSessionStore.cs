@@ -262,43 +262,6 @@ namespace Loupedeck.ClaudeKeysPlugin
             return ClaudeApp.IsFront(CodexThreads.BundleId) ? CodexThreads.ReadOpenThreadId() : null;
         }
 
-        // Where Claude's log ends now, so WasArchivedSince reads only what Claude writes after it.
-        public static Int64 AppLogLength()
-        {
-            try
-            {
-                return new FileInfo(AppLog).Length;
-            }
-            catch (IOException)
-            {
-                return 0;
-            }
-        }
-
-        // Claude logs each archive, so this tells whether an archive shortcut actually worked.
-        public static Boolean WasArchivedSince(Int64 offset, String id)
-        {
-            try
-            {
-                using var log = new FileStream(AppLog, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-
-                if (log.Length < offset)
-                {
-                    offset = 0; // The log was rotated.
-                }
-
-                var bytes = new Byte[Math.Min(log.Length - offset, LogTailBytes)];
-                log.Seek(-bytes.Length, SeekOrigin.End);
-                log.ReadExactly(bytes);
-
-                return Encoding.UTF8.GetString(bytes).Contains($"LocalSessions.archive: sessionId={id}");
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-        }
-
         private static String ReadFocusedIdFromLog()
         {
             try

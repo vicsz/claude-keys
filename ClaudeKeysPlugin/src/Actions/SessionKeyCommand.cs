@@ -4,16 +4,12 @@ namespace Loupedeck.ClaudeKeysPlugin
     using System.Threading;
 
     // A key you lock to any session. Tap an empty key to lock the session on screen, tap a locked
-    // key to open its session, and hold a locked key to pin it here, unpin it or archive it. Keys 1 to 6 fill the top two
+    // key to open its session, and hold a locked key to pin it here or unpin it. Keys 1 to 6 fill the top two
     // rows in order, so each key's number is also its position on the reply page.
 
     public class SessionKeyCommand : PluginDynamicCommand
     {
         private const Int32 KeyCount = 6;
-        private const Int32 ArchiveSwitchLimitMilliseconds = 1500;
-        private const Int32 ArchiveSettleMilliseconds = 300;
-        private const Int32 ArchiveCheckMilliseconds = 500;
-        private const Int32 ArchiveAttempts = 3;
         private const Int32 DotCount = 3;
         private const Int32 DotMilliseconds = 500;
 
@@ -142,59 +138,7 @@ namespace Loupedeck.ClaudeKeysPlugin
 
             ReplyMode.EnterSessionPage(new SessionKeyActions(
                 PinCurrent: () => this.LockCurrent(key),
-                Unpin: () => this.Clear(key),
-                Archive: session.IsCodex ? null : () => this.Archive(session)));
-        }
-
-        // Claude's archive shortcut acts on the session on screen, so this opens the key's session first and
-        // archives only once Claude confirms it's showing. If it doesn't show in time, nothing is archived.
-        // Claude says a session is showing before its page can take shortcuts, so a freshly opened session
-        // gets a moment to settle, and the shortcut is pressed again until Claude's log shows the archive.
-        // Every press first checks the session is still on screen. The key then clears itself, since an
-        // archived session is gone from the list.
-        private void Archive(SessionInfo session)
-        {
-            Boolean IsOnScreen() => ClaudeApp.IsFront(ClaudeApp.BundleId) && this.Sessions.FocusedNow()?.Id == session.Id;
-
-            if (!IsOnScreen())
-            {
-                ClaudeApp.OpenSession(session.BridgeId, session.Id);
-                var deadline = DateTime.UtcNow.AddMilliseconds(ArchiveSwitchLimitMilliseconds);
-
-                while (!IsOnScreen())
-                {
-                    if (DateTime.UtcNow > deadline)
-                    {
-                        PluginLog.Warning($"'{session.Name}' did not come on screen, so it was not archived");
-                        return;
-                    }
-
-                    Thread.Sleep(100);
-                }
-
-                Thread.Sleep(ArchiveSettleMilliseconds);
-            }
-
-            for (var attempt = 1; attempt <= ArchiveAttempts; attempt++)
-            {
-                if (!IsOnScreen())
-                {
-                    PluginLog.Warning($"'{session.Name}' left the screen, so it was not archived");
-                    return;
-                }
-
-                var logEnd = ClaudeSessionStore.AppLogLength();
-                this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.KeyA, ModifierKey.Command | ModifierKey.Alt);
-                Thread.Sleep(ArchiveCheckMilliseconds);
-
-                if (ClaudeSessionStore.WasArchivedSince(logEnd, session.Id))
-                {
-                    PluginLog.Info($"Archived '{session.Name}' on press {attempt}");
-                    return;
-                }
-            }
-
-            PluginLog.Warning($"Claude did not archive '{session.Name}' after {ArchiveAttempts} presses");
+                Unpin: () => this.Clear(key)));
         }
 
         private void LockCurrent(Int32 key)
