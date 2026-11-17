@@ -4,7 +4,7 @@
 
 Six agents, nine keys: see who needs you, jump there, dictate, send.
 
-<img src="keypad.svg" width="400" alt="The keypad: a Claude session working on step 3 of 5, one waiting for you, one finished, a Codex thread working, an idle session, an empty key, and Dictate, Return and Cancel">
+<img src="keypad.svg" width="400" alt="The keypad: a Claude session working on step 3 of 5, one waiting for you, one finished, a Codex thread working, an empty key, the Usage key at 72% left of the week, and Dictate, Return and Cancel">
 
 I've moved fully to dictation: most of my agent work is done by voice now. Typing went away, but the mouse didn't.
 My day became one loop: find the session that needs me, click into it, dictate, send, find the next one.

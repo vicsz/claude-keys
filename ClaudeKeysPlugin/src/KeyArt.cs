@@ -113,8 +113,8 @@ namespace Loupedeck.ClaudeKeysPlugin
 
                 builder.Clear(BitmapColor.FromRgb(Surface));
                 builder.DrawImage(BitmapImage.FromSvg(svg), 0, 0, pixels, pixels);
-                builder.DrawText(amount, 0, Scaled(30, scale), builder.Width, Scaled(26, scale), BitmapColor.FromRgb(tone == UsageTone.Stale ? Muted : Text), Scaled(22, scale));
-                builder.DrawText(line, 0, Scaled(56, scale), builder.Width, Scaled(16, scale), BitmapColor.FromRgb(color), Scaled(12, scale));
+                builder.DrawText(amount, 0, Scaled(28, scale), builder.Width, Scaled(26, scale), BitmapColor.FromRgb(tone == UsageTone.Stale ? Muted : Text), Scaled(22, scale));
+                builder.DrawText(line, 0, Scaled(53, scale), builder.Width, Scaled(14, scale), BitmapColor.FromRgb(color), Scaled(10, scale));
                 builder.DrawText(footer, 0, Scaled(94, scale), builder.Width, Scaled(18, scale), BitmapColor.FromRgb(Muted), Scaled(13, scale));
                 return builder.ToImage();
             }
