@@ -30,6 +30,7 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 - `ClaudeSessionStore.cs`: reads every session's status every 2 seconds. All Claude file knowledge stays here.
 - `CodexThreads.cs`: the same for Codex. All Codex file knowledge stays here.
 - `ClaudeTranscripts.cs`: step count (2/4) for busy sessions, from their task list.
+- `ClaudeUsage.cs`: usage and pace for the Usage key. All usage knowledge stays here.
 - `ClaudeApp.cs`: everything that acts on the Claude window (links, shortcuts, paste, palette).
 - `ReplyMode.cs`: the hold pages for Return, Cancel and Session keys.
 - `KeyArt.cs`: draws every key.
@@ -43,6 +44,10 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 - Links: `claude://claude.ai/code/<bridgeSessionId>` opens a session, `claude://code/new?source=desktop_action` starts one.
   Bridge IDs exist only with Remote Control on (it can be disabled by policy), so without one the plugin opens
   `claude://code/continue?session=<local_id>&source=desktop_action`.
+- Usage: `GET https://api.anthropic.com/api/oauth/usage` with the CLI's token (Keychain item `Claude Code-credentials`, `claudeAiOauth.accessToken`)
+  and header `anthropic-beta: oauth-2025-04-20`. Spend-limit accounts fill `spend` (`limit` and `used` in `amount_minor` with `exponent`,
+  month resets 00:00 UTC on the 1st). Plans fill `limits[]` (`percent`, `severity`, `resets_at`, `is_active`). `claude -p /usage` refreshes an
+  expired token without calling a model; `claude auth status` doesn't. Never print or log the token.
 - Shortcuts: Dictate `Cmd+D`, Accept `Cmd+Return`, Fork `Cmd+Opt+O`, Archive `Cmd+Opt+A`. `/btw <text>` opens a side chat, and dictation doesn't work inside one.
 
 ## Codex (undocumented)

@@ -42,6 +42,7 @@ namespace Loupedeck.ClaudeKeysPlugin
         private const UInt32 UnlitDot = 0x24405C;
         private const UInt32 Amber = 0xFFB547;
         private const UInt32 Green = 0x37D39A;
+        private const UInt32 Red = 0xFF5D5D;
         private const UInt32 Dim = 0x3A4653;
         private const UInt32 DimText = 0x66727F;
         private const UInt32 Ink = 0x14100A;
@@ -94,6 +95,50 @@ namespace Loupedeck.ClaudeKeysPlugin
                 builder.Clear(BitmapColor.FromRgb(background));
                 DrawIcon(builder, icon, color, 33, 12, 50, scale);
                 builder.DrawText(label, 0, Scaled(74, scale), builder.Width, Scaled(32, scale), BitmapColor.FromRgb(color), Scaled(19, scale));
+                return builder.ToImage();
+            }
+        }
+
+        // The usage ring: the arc is how much is used, and the white tick is where an even pace would be.
+        // The arc and the line under the amount take the forecast's colour. The ring is drawn at key size.
+        public static BitmapImage Usage(PluginImageSize imageSize, Double used, Double pace, UsageTone tone, String amount, String line, String footer)
+        {
+            const Single cx = 58, cy = 50, r = 37, stroke = 8;
+            var circumference = 2 * MathF.PI * r;
+            var color = tone switch { UsageTone.Good => Green, UsageTone.Warn => Amber, UsageTone.Bad => Red, _ => Muted };
+            var arc = (Single)Math.Clamp(used, 0, 1) * circumference;
+            var angle = (Single)Math.Clamp(pace, 0, 1) * 2 * MathF.PI;
+            var (sin, cos) = MathF.SinCos(angle);
+
+            using (var builder = new BitmapBuilder(imageSize))
+            {
+                var scale = (Single)builder.Width / DesignSize;
+                var pixels = Scaled(DesignSize, scale);
+                var svg = FormattableString.Invariant(
+                    $"<svg xmlns='http://www.w3.org/2000/svg' width='{pixels}' height='{pixels}' viewBox='0 0 {DesignSize} {DesignSize}' fill='none' stroke-width='{stroke}'>") +
+                    FormattableString.Invariant($"<circle cx='{cx}' cy='{cy}' r='{r}' stroke='{Hex(Dim)}'/>") +
+                    (arc > 0 ? FormattableString.Invariant($"<circle cx='{cx}' cy='{cy}' r='{r}' stroke='{Hex(color)}' stroke-linecap='round' stroke-dasharray='{arc} {circumference}' transform='rotate(-90 {cx} {cy})'/>") : String.Empty) +
+                    (tone == UsageTone.Stale ? String.Empty : FormattableString.Invariant($"<line x1='{cx + ((r - 7) * sin)}' y1='{cy - ((r - 7) * cos)}' x2='{cx + ((r + 7) * sin)}' y2='{cy - ((r + 7) * cos)}' stroke='{Hex(Text)}' stroke-width='3' stroke-linecap='round'/>")) +
+                    $"{KeepColor}</svg>";
+
+                builder.Clear(BitmapColor.FromRgb(Surface));
+                builder.DrawImage(BitmapImage.FromSvg(svg), 0, 0, pixels, pixels);
+                builder.DrawText(amount, 0, Scaled(30, scale), builder.Width, Scaled(26, scale), BitmapColor.FromRgb(tone == UsageTone.Stale ? Muted : Text), Scaled(22, scale));
+                builder.DrawText(line, 0, Scaled(56, scale), builder.Width, Scaled(16, scale), BitmapColor.FromRgb(color), Scaled(12, scale));
+                builder.DrawText(footer, 0, Scaled(94, scale), builder.Width, Scaled(18, scale), BitmapColor.FromRgb(Muted), Scaled(13, scale));
+                return builder.ToImage();
+            }
+        }
+
+        // When there's no reading yet, or it can't be read: an empty ring and a short reason.
+        public static BitmapImage UsageMessage(PluginImageSize imageSize, String message)
+        {
+            using (var builder = new BitmapBuilder(imageSize))
+            {
+                var scale = (Single)builder.Width / DesignSize;
+                builder.Clear(BitmapColor.FromRgb(Surface));
+                builder.DrawText("Usage", 0, Scaled(28, scale), builder.Width, Scaled(24, scale), BitmapColor.FromRgb(Muted), Scaled(17, scale));
+                builder.DrawText(message, 0, Scaled(58, scale), builder.Width, Scaled(36, scale), BitmapColor.FromRgb(Text), Scaled(14, scale));
                 return builder.ToImage();
             }
         }

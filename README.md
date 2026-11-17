@@ -27,6 +27,7 @@ Return and Cancel work in any app.
 | Dictate | Start or stop dictation in the app in front: Claude's mic in Claude, ChatGPT's dictation anywhere else | — |
 | Return | Press Return in the app in front: sends, or finishes dictation | New (session), Side chat, Fork, Yes, Commit |
 | Cancel | Press Escape in the app in front: cancels dictation or interrupts | Archive |
+| Usage (optional) | Switch between your 5-hour and weekly limits | — |
 
 Session key colours: blue dots = working, amber = waiting for you, green = finished, grey = idle.
 Codex bubbles point right.
@@ -85,6 +86,24 @@ Dictate presses one shortcut in Claude and another everywhere else:
 The ChatGPT one works in any app, so Dictate can type into Codex, Messages, Slack or anywhere else.
 Skip it if you only use Claude.
 
+## Usage key (optional)
+
+The Usage key shows how much of your Claude limit you've used, and whether you're on track:
+
+- **The ring** is what you've used, and **the white tick** is where an even pace would put you today.
+- **The colour is the forecast**: green, you'll finish under; amber, you're ahead of pace; red, at your recent rate
+  you'll run out before it resets. Grey means the number is out of date.
+- **The line under the number** says how far ahead you are, how much you have spare, or when you'd run out.
+
+Plans show the 5-hour limit, and a tap switches to the weekly one and back. If the week is heading for red, the
+key shows it even on the 5-hour view, until you tap past it. Accounts with a monthly spend limit (like many company
+seats) show dollars for the month, and a tap refreshes.
+
+It uses the same numbers as `/usage` in the Claude CLI, so it needs the CLI installed and signed in
+(`claude auth login`). The first time, macOS asks to let `security` read "Claude Code-credentials": choose
+**Always Allow**. When the sign-in expires, the key runs `claude -p /usage` to refresh it, which doesn't use any
+of your limit. The plugin only reads your sign-in once a Usage key is on your keypad, and never saves or logs it.
+
 ## Tip: short session names
 
 Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit on a key:
@@ -108,6 +127,7 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 - Codex support covers the session keys, Return and Cancel. The hold pages and Archive are Claude only.
 - The dictation shortcuts are fixed (`Cmd+D` in Claude, `Ctrl+Opt+Cmd+D` elsewhere). Choosing them in
   Logi Options+ is possible, but not built yet.
+- The Usage key reads an undocumented Claude endpoint, so an update can break it. It goes grey rather than show a wrong number.
 
 ## Why not hooks?
 

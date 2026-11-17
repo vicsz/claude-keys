@@ -15,6 +15,11 @@ namespace Loupedeck.ClaudeKeysPlugin
         // Gets the live Claude session data shared by all keys.
         public ClaudeSessionStore Sessions { get; } = new ClaudeSessionStore();
 
+        private ClaudeUsage _usage;
+
+        // Gets Claude's usage for the Usage key. It starts only when that key is first drawn.
+        public ClaudeUsage Usage => this._usage ??= new ClaudeUsage(this.GetPluginDataDirectory());
+
         // Initializes a new instance of the plugin class.
         public ClaudeKeysPlugin()
         {
@@ -29,6 +34,10 @@ namespace Loupedeck.ClaudeKeysPlugin
         public override void Load() => this.Sessions.Start();
 
         // This method is called when the plugin is unloaded.
-        public override void Unload() => this.Sessions.Dispose();
+        public override void Unload()
+        {
+            this.Sessions.Dispose();
+            this._usage?.Dispose();
+        }
     }
 }
