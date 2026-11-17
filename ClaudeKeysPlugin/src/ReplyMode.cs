@@ -5,8 +5,8 @@ namespace Loupedeck.ClaudeKeysPlugin
     using System.Threading;
     using System.Threading.Tasks;
 
-    // Holding Return turns the whole keypad into quick replies, and holding Cancel into ways to end the session. Every key is ours, so each one
-    // redraws itself as a reply and acts as one, then goes back to normal.
+    // Holding a session key or Cancel turns the whole keypad into a page of buttons. Every key is ours, so each one
+    // redraws itself as a button and acts as one, then goes back to normal.
     // Slots run left to right, top to bottom, and match the key layout.
 
     public record SessionKeyActions(Action PinCurrent, Action Unpin);
@@ -16,26 +16,12 @@ namespace Loupedeck.ClaudeKeysPlugin
         private const Int32 CancelSlot = 8;
         private const Int32 TimeoutMilliseconds = 10000;
 
-        private record Reply(String Icon, String Label, String Message, Action<ClientApplication> Run = null);
+        private record Reply(String Icon, String Label, Action<ClientApplication> Run = null);
 
-        // Everything here acts on the session on screen. The top row says where what you typed goes: New sends
-        // it to a new session, Side chat to a side chat that keeps the thread clean, and Fork to a fork of this one.
-        // Yes presses the main button of Claude's next-step box, or sends what is typed when there is no box.
-        // Slots without a reply stay dark.
-        private static readonly IReadOnlyList<Reply> Replies = new[]
-        {
-            new Reply(KeyArt.NewIcon, "New", null, Run: client => Task.Run(() => ClaudeApp.SendToNewSession(client))),
-            new Reply(KeyArt.SideChatIcon, "Side chat", null, Run: client => Task.Run(() => ClaudeApp.SendAsSideChat(client))),
-            new Reply(KeyArt.ForkIcon, "Fork", null, Run: client => Task.Run(() => ClaudeApp.SendToFork(client))),
-            new Reply(KeyArt.CheckIcon, "Yes", null, Run: client => Press(client, VirtualKeyCode.Return, ModifierKey.Command)),
-            new Reply(KeyArt.CommitIcon, "Commit", "Let's do a commit"),
-            null,
-            null,
-            null,
-            new Reply(KeyArt.CancelIcon, "Cancel", null),
-        };
+        private const Int32 SlotCount = 9;
+        private static readonly Reply Close = new Reply(KeyArt.CancelIcon, "Cancel");
 
-        private static IReadOnlyList<Reply> page = Replies;
+        private static IReadOnlyList<Reply> page = new Reply[SlotCount];
 
         private static readonly Timer Timeout = new Timer(_ => Exit());
 
@@ -43,27 +29,25 @@ namespace Loupedeck.ClaudeKeysPlugin
 
         public static Boolean IsActive { get; private set; }
 
-        public static void Enter() => Open(Replies);
-
         // The page for one session key. Only the keys with a job light up.
         public static void EnterSessionPage(SessionKeyActions actions)
         {
-            var replies = new Reply[Replies.Count];
+            var replies = new Reply[SlotCount];
 
-            replies[0] = new Reply(KeyArt.PinHereIcon, "Pin here", null, Run: _ => actions.PinCurrent());
-            replies[1] = new Reply(KeyArt.UnpinIcon, "Unpin", null, Run: _ => actions.Unpin());
+            replies[0] = new Reply(KeyArt.PinHereIcon, "Pin here", Run: _ => actions.PinCurrent());
+            replies[1] = new Reply(KeyArt.UnpinIcon, "Unpin", Run: _ => actions.Unpin());
 
-            replies[CancelSlot] = Replies[CancelSlot];
+            replies[CancelSlot] = Close;
             Open(replies);
         }
 
         // Ending the session on screen.
         public static void EnterStopPage()
         {
-            var replies = new Reply[Replies.Count];
+            var replies = new Reply[SlotCount];
 
-            replies[0] = new Reply(KeyArt.ArchiveIcon, "Archive", null, Run: client => Shortcut(client, VirtualKeyCode.KeyA));
-            replies[CancelSlot] = Replies[CancelSlot];
+            replies[0] = new Reply(KeyArt.ArchiveIcon, "Archive", Run: client => Shortcut(client, VirtualKeyCode.KeyA));
+            replies[CancelSlot] = Close;
             Open(replies);
         }
 
@@ -99,11 +83,6 @@ namespace Loupedeck.ClaudeKeysPlugin
 
             Exit();
             reply.Run?.Invoke(client);
-
-            if (reply.Message != null)
-            {
-                Task.Run(() => ClaudeApp.SendMessage(client, reply.Message));
-            }
 
             return true;
         }

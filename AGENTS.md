@@ -32,7 +32,7 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
 - `ClaudeTranscripts.cs`: step count (2/4) for busy sessions, from their task list.
 - `ClaudeUsage.cs`: usage and pace for the Usage key. All usage knowledge stays here.
 - `ClaudeApp.cs`: everything that acts on the Claude window (links, shortcuts, paste, palette).
-- `ReplyMode.cs`: the hold pages for Return, Cancel and Session keys.
+- `ReplyMode.cs`: the hold pages for Cancel and Session keys. The Usage key takes Cancel's slot on them.
 - `KeyArt.cs`: draws every key.
 - `SessionKeyLocks.cs`: saves which session is on which key.
 - `Actions/`: one file per key.
@@ -48,7 +48,7 @@ C# Logi Actions plugin for the MX Creative Keypad (3×3 keys, 2 page buttons). R
   and header `anthropic-beta: oauth-2025-04-20`. Spend-limit accounts fill `spend` (`limit` and `used` in `amount_minor` with `exponent`,
   month resets 00:00 UTC on the 1st). Plans fill `limits[]` (`percent`, `severity`, `resets_at`, `is_active`). `claude -p /usage` refreshes an
   expired token without calling a model; `claude auth status` doesn't. Never print or log the token.
-- Shortcuts: Dictate `Cmd+D`, Accept `Cmd+Return`, Fork `Cmd+Opt+O`, Archive `Cmd+Opt+A`. `/btw <text>` opens a side chat, and dictation doesn't work inside one.
+- Shortcuts: Dictate `Cmd+D`, Archive `Cmd+Opt+A`.
 
 ## Codex (undocumented)
 - Threads: `~/.codex/state_5.sqlite`. Logs: `~/Library/Logs/com.openai.codex`.

@@ -11,10 +11,6 @@ namespace Loupedeck.ClaudeKeysPlugin
     {
         public const String BundleId = "com.anthropic.claudefordesktop";
         private const Int32 ActivationDelayMilliseconds = 150;
-        private const Int32 ClipboardDelayMilliseconds = 60;
-        private const Int32 PasteDelayMilliseconds = 200;
-        private const Int32 NewSessionDelayMilliseconds = 800;
-        private const Int32 ForkDelayMilliseconds = 1500;
 
         private static readonly Regex ValidBridgeId = new Regex("^session_[A-Za-z0-9]+$");
         private static readonly Regex ValidLocalId = new Regex("^local_[A-Za-z0-9-]{1,64}$");
@@ -40,7 +36,7 @@ namespace Loupedeck.ClaudeKeysPlugin
 
             try
             {
-                Run("/usr/bin/open", null, link);
+                Run("/usr/bin/open", link);
             }
             catch (Exception ex)
             {
@@ -53,105 +49,29 @@ namespace Loupedeck.ClaudeKeysPlugin
         {
             if (!IsFront(BundleId))
             {
-                Run("/usr/bin/open", null, "-b", BundleId);
+                Run("/usr/bin/open", "-b", BundleId);
                 Thread.Sleep(ActivationDelayMilliseconds);
             }
 
             return IsFront(BundleId);
         }
 
-        // Pastes the text into the message box and sends it.
-        public static void SendMessage(ClientApplication client, String text)
-        {
-            if (!BringToFront())
-            {
-                PluginLog.Warning("Claude did not come to the front, so the reply was not sent");
-                return;
-            }
-
-            PasteAndEnter(client, text);
-        }
-
-        // Sends what you have typed or dictated to a side chat, by putting /btw in front of it.
-        public static void SendAsSideChat(ClientApplication client)
-        {
-            if (!BringToFront())
-            {
-                PluginLog.Warning("Claude did not come to the front, so the side chat was not sent");
-                return;
-            }
-
-            client.SendKeyboardShortcut(VirtualKeyCode.ArrowUp, ModifierKey.Command);
-            Thread.Sleep(ClipboardDelayMilliseconds);
-            PasteAndEnter(client, "/btw ");
-        }
-
-        // Moves what you have typed or dictated into a new session, or a fork of this one, and sends it there.
-        public static void SendToNewSession(ClientApplication client) =>
-            MoveTextTo(client, VirtualKeyCode.KeyN, ModifierKey.Command, NewSessionDelayMilliseconds, "new session");
-
-        public static void SendToFork(ClientApplication client) =>
-            MoveTextTo(client, VirtualKeyCode.KeyO, ModifierKey.Command | ModifierKey.Alt, ForkDelayMilliseconds, "fork");
-
-        // The clipboard is emptied first, so an empty box, or focus outside it, only opens the new session.
-        private static void MoveTextTo(ClientApplication client, VirtualKeyCode key, ModifierKey modifiers, Int32 delay, String destination)
-        {
-            if (!BringToFront())
-            {
-                PluginLog.Warning($"Claude did not come to the front, so no {destination} was started");
-                return;
-            }
-
-            var clipboard = Run("/usr/bin/pbpaste", null);
-            Run("/usr/bin/pbcopy", "");
-            client.SendKeyboardShortcut(VirtualKeyCode.KeyA, ModifierKey.Command);
-            Thread.Sleep(ClipboardDelayMilliseconds);
-            client.SendKeyboardShortcut(VirtualKeyCode.KeyX, ModifierKey.Command);
-            Thread.Sleep(ClipboardDelayMilliseconds);
-            var text = Run("/usr/bin/pbpaste", null);
-
-            client.SendKeyboardShortcut(key, modifiers);
-            Thread.Sleep(delay);
-
-            if (!String.IsNullOrWhiteSpace(text))
-            {
-                PasteAndEnter(client, text);
-            }
-
-            Run("/usr/bin/pbcopy", clipboard);
-        }
-
-        // Pastes the text, presses Enter, then puts the clipboard text back.
-        private static void PasteAndEnter(ClientApplication client, String text)
-        {
-            var clipboard = Run("/usr/bin/pbpaste", null);
-
-            Run("/usr/bin/pbcopy", text);
-            Thread.Sleep(ClipboardDelayMilliseconds);
-            client.SendKeyboardShortcut(VirtualKeyCode.KeyV, ModifierKey.Command);
-            Thread.Sleep(PasteDelayMilliseconds);
-            client.SendKeyboardShortcut(VirtualKeyCode.Return);
-            Thread.Sleep(PasteDelayMilliseconds);
-            Run("/usr/bin/pbcopy", clipboard);
-        }
-
         public static Boolean IsFront(String bundleId)
         {
-            var front = Run("/usr/bin/lsappinfo", null, "front").Trim();
-            return Run("/usr/bin/lsappinfo", null, "info", "-only", "bundleid", front).Contains($"\"{bundleId}\"");
+            var front = Run("/usr/bin/lsappinfo", "front").Trim();
+            return Run("/usr/bin/lsappinfo", "info", "-only", "bundleid", front).Contains($"\"{bundleId}\"");
         }
 
         // Plays a built-in macOS sound without waiting for it to finish.
         public static void PlaySound(String name) =>
             Process.Start("/usr/bin/afplay", $"/System/Library/Sounds/{name}.aiff")?.Dispose();
 
-        private static String Run(String command, String input, params String[] arguments)
+        private static String Run(String command, params String[] arguments)
         {
             var start = new ProcessStartInfo(command)
             {
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                RedirectStandardInput = input != null,
             };
 
             foreach (var argument in arguments)
@@ -160,12 +80,6 @@ namespace Loupedeck.ClaudeKeysPlugin
             }
 
             using var process = Process.Start(start);
-
-            if (input != null)
-            {
-                process.StandardInput.Write(input);
-                process.StandardInput.Close();
-            }
 
             var output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();

@@ -8,19 +8,9 @@ namespace Loupedeck.ClaudeKeysPlugin
     {
         public const String MicIcon = "<rect x='8.5' y='2' width='7' height='13' rx='3.5'/><path d='M4.5 11.5a7.5 7.5 0 0 0 15 0M12 19v3M8 22h8'/>";
         public const String ReturnIcon = "<path d='M20 4v7a4 4 0 0 1-4 4H4'/><path d='M9 10l-5 5 5 5'/>";
-        public const String CheckIcon = "<path d='M4.5 12.5l5 5 10-11'/>";
-        public const String CommitIcon = "<circle cx='12' cy='12' r='4'/><path d='M2 12h6M16 12h6'/>";
         public const String PinIcon = "<path d='M12 16v6M8 2.5h8l-1 7.5 4 5H5l4-5z'/>";
         public const String PinHereIcon = PinIcon + "<path d='M20.5 2v5M18 4.5h5'/>";
         public const String UnpinIcon = PinIcon + "<path d='M3 3l18 18'/>";
-
-        // A Return arrow with a mark above it for where your text goes: a plus for a new session, a speech
-        // bubble for a side chat, a branch for a fork. The arrow sits low and wide to leave room for the mark,
-        // and each mark is placed by eye over the arrow's body.
-        private const String LowReturn = "<path d='M21 11v3.5a3.5 3.5 0 0 1-3.5 3.5H3.5'/><path d='M8 13.5l-4.5 4.5 4.5 4.5'/>";
-        public const String NewIcon = LowReturn + "<g transform='translate(13 5) scale(1.3) translate(-20 -5)' stroke-width='1.55'><path d='M20.5 2v5M18 4.5h5'/></g>";
-        public const String SideChatIcon = LowReturn + "<g transform='translate(15 5) scale(1.3) translate(-20 -5)' stroke-width='1.55'><path d='M16.5 1.5h6a1 1 0 0 1 1 1V6a1 1 0 0 1-1 1H19l-2 1.8V7h-.5a1 1 0 0 1-1-1V2.5a1 1 0 0 1 1-1z'/></g>";
-        public const String ForkIcon = LowReturn + "<g transform='translate(14 5) scale(1.3) translate(-20 -5)' stroke-width='1.55'><path d='M20 9V5.5M20 5.5L17 2M20 5.5L23 2'/></g>";
 
         // A lidded box with an arrow going in: put away, not gone.
         public const String ArchiveIcon = "<rect x='2.5' y='3.5' width='19' height='5' rx='1.2'/><path d='M4.5 8.5v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-10'/><path d='M12 11v6M9 14.5l3 3 3-3'/>";

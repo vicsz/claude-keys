@@ -14,7 +14,7 @@ So I wondered whether I could drop the mouse altogether, and put that loop on ni
 2. **Tap it.** Claude jumps straight to it.
 3. **Tap Dictate** and talk.
 4. **Tap Return.** It sends, and the key's bubble turns blue while Claude works.
-5. Glance down for the next amber key. Hold Return instead to send your words to a new session, a side chat or a fork.
+5. Glance down for the next amber key.
 
 It works with the Claude desktop app on macOS. Codex threads can go on the session keys too, and Dictate,
 Return and Cancel work in any app.
@@ -25,7 +25,7 @@ Return and Cancel work in any app.
 |---|---|---|
 | Session 1–6 | Open that session (Claude or Codex). Empty: pin the session on screen | Pin here, Unpin |
 | Dictate | Start or stop dictation in the app in front: Claude's mic in Claude, ChatGPT's dictation anywhere else | — |
-| Return | Press Return in the app in front: sends, or finishes dictation | New (session), Side chat, Fork, Yes, Commit |
+| Return | Press Return in the app in front: sends, or finishes dictation | — |
 | Cancel | Press Escape in the app in front: cancels dictation or interrupts | Archive |
 | Usage (optional) | Switch between your 5-hour and weekly limits | — |
 
@@ -34,12 +34,9 @@ Codex bubbles point right.
 
 ## Hold pages
 
-Holding Return, Cancel or a session key turns the keypad into a page of buttons. The Cancel key closes it,
-and it closes by itself after 10 seconds.
+Holding Cancel or a session key turns the keypad into a page of buttons. The Cancel key (or the Usage key, if
+it took Cancel's place) closes it, and it closes by itself after 10 seconds.
 
-- **Return** acts on the session on screen. New, Side chat and Fork take what you've typed or dictated and send it to a
-  new session, a side chat (`/btw`) or a fork of this one. Yes presses the main button of Claude's next-step box,
-  or sends your text when there's no box. Commit sends "Let's do a commit".
 - **Cancel** archives the session on screen.
 - **A session key**: Pin here puts the session on screen on that key, and Unpin empties the key.
   To archive a key's session, tap the key to open it, then hold Cancel.

@@ -2,14 +2,12 @@ namespace Loupedeck.ClaudeKeysPlugin
 {
     using System;
 
-    // Tap presses Return in whatever app is in front: it sends, or finishes dictation. Hold opens the quick reply page.
+    // Tap presses Return in whatever app is in front: it sends, or finishes dictation.
 
     public class GoCommand : ClaudeShortcutCommand
     {
-        private Boolean _held;
-
         public GoCommand()
-            : base("Return", "Tap to press Return in the app in front: sends, or finishes dictation. Hold for quick replies in Claude", KeyArt.ReturnIcon, replySlot: 7)
+            : base("Return", "Presses Return in the app in front: sends, or finishes dictation", KeyArt.ReturnIcon, replySlot: 7)
         {
         }
 
@@ -21,33 +19,6 @@ namespace Loupedeck.ClaudeKeysPlugin
             if (!DictateCommand.StopIfDictating(this.Plugin.ClientApplication))
             {
                 this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Return);
-            }
-        }
-
-        // Tap acts on release, so that a hold never sends anything.
-        protected override Boolean ProcessButtonEvent2(String actionParameter, DeviceButtonEvent2 buttonEvent)
-        {
-            switch (buttonEvent.EventType)
-            {
-                case DeviceButtonEventType.Press:
-                    this._held = false;
-                    return true;
-
-                case DeviceButtonEventType.LongPress:
-                    this._held = true;
-                    ReplyMode.Enter();
-                    return true;
-
-                case DeviceButtonEventType.Release:
-                    if (!this._held)
-                    {
-                        this.RunCommand(actionParameter);
-                    }
-
-                    return true;
-
-                default:
-                    return true;
             }
         }
     }
