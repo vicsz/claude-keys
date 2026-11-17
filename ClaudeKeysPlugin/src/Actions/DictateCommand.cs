@@ -8,6 +8,9 @@ namespace Loupedeck.ClaudeKeysPlugin
 
     public class DictateCommand : ClaudeShortcutCommand
     {
+        // ChatGPT's dictation runs in "Codex (Aperitif)".
+        private const String ChatGptDictation = "Codex";
+
         public DictateCommand()
             : base("Dictate", "Starts or stops dictation: Claude's mic in Claude, ChatGPT's dictation anywhere else", KeyArt.MicIcon, replySlot: 6)
         {
@@ -15,16 +18,50 @@ namespace Loupedeck.ClaudeKeysPlugin
 
         protected override Boolean SwitchesToClaude => false;
 
-        protected override void SendShortcut()
+        // Claude plays its own dictation sounds, but ChatGPT's dictation is silent, so the plugin plays them.
+
+        // Stops ChatGPT's dictation if it's recording. Return uses this too, because Codex ignores Return while dictating.
+        public static Boolean StopIfDictating(ClientApplication client)
         {
-            if (ClaudeApp.IsFront(ClaudeApp.BundleId))
+            if (!Microphone.IsRecording(ChatGptDictation))
             {
-                this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.KeyD, ModifierKey.Command);
+                return false;
             }
-            else
+
+            PressChatGptShortcut(client);
+            ClaudeApp.PlaySound("Bottle");
+            return true;
+        }
+
+        // For keys that end dictation as a side effect, like Escape: presses the key, then plays the stop sound if it was recording.
+        public static void PressAndSoundIfStopping(Action press)
+        {
+            var stopping = Microphone.IsRecording(ChatGptDictation);
+            press();
+
+            if (stopping)
             {
-                this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.KeyD, ModifierKey.Control | ModifierKey.Alt | ModifierKey.Command);
+                ClaudeApp.PlaySound("Bottle");
             }
         }
+
+        protected override void SendShortcut()
+        {
+            var client = this.Plugin.ClientApplication;
+
+            if (ClaudeApp.IsFront(ClaudeApp.BundleId))
+            {
+                client.SendKeyboardShortcut(VirtualKeyCode.KeyD, ModifierKey.Command);
+            }
+            else if (!StopIfDictating(client))
+            {
+                // The start sound plays before the mic opens, so it never ends up in the text.
+                ClaudeApp.PlaySound("Pop");
+                PressChatGptShortcut(client);
+            }
+        }
+
+        private static void PressChatGptShortcut(ClientApplication client) =>
+            client.SendKeyboardShortcut(VirtualKeyCode.KeyD, ModifierKey.Control | ModifierKey.Alt | ModifierKey.Command);
     }
 }

@@ -141,6 +141,10 @@ namespace Loupedeck.ClaudeKeysPlugin
             return Run("/usr/bin/lsappinfo", null, "info", "-only", "bundleid", front).Contains($"\"{bundleId}\"");
         }
 
+        // Plays a built-in macOS sound without waiting for it to finish.
+        public static void PlaySound(String name) =>
+            Process.Start("/usr/bin/afplay", $"/System/Library/Sounds/{name}.aiff")?.Dispose();
+
         private static String Run(String command, String input, params String[] arguments)
         {
             var start = new ProcessStartInfo(command)

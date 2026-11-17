@@ -86,6 +86,10 @@ Dictate presses one shortcut in Claude and another everywhere else:
 The ChatGPT one works in any app, so Dictate can type into Codex, Messages, Slack or anywhere else.
 Skip it if you only use Claude.
 
+Claude plays a sound when dictation starts and stops. ChatGPT's dictation is silent, so Claude Keys plays its own:
+Pop when it starts, and Bottle when Dictate, Return or Cancel stops it. While ChatGPT is dictating, Return stops
+dictation instead of sending (some apps, like Codex, ignore Return then). Tap it again to send.
+
 ## Usage key (optional)
 
 The Usage key shows how much of your Claude limit you've used, and whether you're on track:
@@ -128,6 +132,7 @@ Session names are long by default. Add this to `~/.claude/CLAUDE.md` so they fit
 - The dictation shortcuts are fixed (`Cmd+D` in Claude, `Ctrl+Opt+Cmd+D` elsewhere). Choosing them in
   Logi Options+ is possible, but not built yet.
 - The Usage key reads an undocumented Claude endpoint, so an update can break it. It goes grey rather than show a wrong number.
+- ChatGPT's stop sound only plays when a keypad key ends dictation, not when you stop it another way.
 
 ## Why not hooks?
 

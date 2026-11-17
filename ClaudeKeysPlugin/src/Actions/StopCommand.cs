@@ -16,7 +16,7 @@ namespace Loupedeck.ClaudeKeysPlugin
         protected override Boolean SwitchesToClaude => false;
 
         protected override void SendShortcut() =>
-            this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Escape);
+            DictateCommand.PressAndSoundIfStopping(() => this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Escape));
 
         // Tap acts on release, so that a hold never cancels as well.
         protected override Boolean ProcessButtonEvent2(String actionParameter, DeviceButtonEvent2 buttonEvent)

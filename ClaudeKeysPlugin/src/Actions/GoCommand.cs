@@ -15,8 +15,14 @@ namespace Loupedeck.ClaudeKeysPlugin
 
         protected override Boolean SwitchesToClaude => false;
 
-        protected override void SendShortcut() =>
-            this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Return);
+        // While ChatGPT is dictating, Return stops it instead, like Return finishing dictation in Claude.
+        protected override void SendShortcut()
+        {
+            if (!DictateCommand.StopIfDictating(this.Plugin.ClientApplication))
+            {
+                this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Return);
+            }
+        }
 
         // Tap acts on release, so that a hold never sends anything.
         protected override Boolean ProcessButtonEvent2(String actionParameter, DeviceButtonEvent2 buttonEvent)
