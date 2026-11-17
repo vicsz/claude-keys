@@ -6,9 +6,12 @@ namespace Loupedeck.ClaudeKeysPlugin
     // Shows your Claude usage and whether you're on track. The ring is what you've used, the white tick is where an
     // even pace would put you today, and the colour is the forecast. Tap to switch between the 5-hour and weekly
     // limits, or to refresh when there's only one.
+    // On hold pages it takes Cancel's slot, so it closes the page wherever it's placed, even when it replaces Cancel.
 
     public class UsageCommand : PluginDynamicCommand
     {
+        private const Int32 ReplySlot = 8;
+
         public UsageCommand()
             : base(displayName: "Usage", description: "Your Claude usage and whether you're on track to stay within it. Tap to switch between 5 hours and the week", groupName: "Claude")
         {
@@ -20,20 +23,33 @@ namespace Loupedeck.ClaudeKeysPlugin
         protected override Boolean OnLoad()
         {
             this.Usage.Changed += this.Redraw;
+            ReplyMode.Changed += this.Redraw;
             return true;
         }
 
         protected override Boolean OnUnload()
         {
             this.Usage.Changed -= this.Redraw;
+            ReplyMode.Changed -= this.Redraw;
             return true;
         }
 
-        protected override void RunCommand(String actionParameter) => this.Usage.Toggle();
+        protected override void RunCommand(String actionParameter)
+        {
+            if (!ReplyMode.TryPress(ReplySlot, this.Plugin.ClientApplication))
+            {
+                this.Usage.Toggle();
+            }
+        }
 
         protected override BitmapImage GetCommandImage(String actionParameter, PluginImageSize imageSize)
         {
             this.Usage.EnsureStarted();
+
+            if (ReplyMode.IsActive)
+            {
+                return ReplyMode.Draw(ReplySlot, imageSize);
+            }
 
             var reading = this.Usage.Latest;
             var pace = this.Usage.GetPace(reading);
