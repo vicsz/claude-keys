@@ -89,16 +89,18 @@ dictation instead of sending (some apps, like Codex, ignore Return then). Tap it
 
 ## Usage key (optional)
 
-The Usage key shows how much of your Claude limit you've used, and whether you're on track:
+The Usage key shows how much of your Claude limit you have left, and whether you're on track:
 
-- **The ring** is what you've used, and **the white tick** is where an even pace would put you today.
-- **The colour is the forecast**: green, you'll finish under; amber, you're ahead of pace; red, at your recent rate
-  you'll run out before it resets. Grey means the number is out of date.
-- **The line under the number** says how far ahead you are, how much you have spare, or when you'd run out.
+- **The ring** is what's left: full when the limit resets, empty when it's gone. **The white tick** is where an
+  even pace would leave you today.
+- **The colour is the forecast**: green, you'll finish under; amber, you're using it faster than an even pace;
+  red, at your recent rate you'll run out before it resets. Grey means the number is out of date.
+- **The line under the number** says how far over an even pace you are, how much you have spare, or when you'd
+  run out.
 
 Plans show the 5-hour limit, and a tap switches to the weekly one and back. If the week is heading for red, the
 key shows it even on the 5-hour view, until you tap past it. Accounts with a monthly spend limit (like many company
-seats) show dollars for the month, and a tap refreshes.
+seats) show dollars for the month. The key checks every 5 minutes, and tapping never calls the server.
 
 It uses the same numbers as `/usage` in the Claude CLI, so it needs the CLI installed and signed in
 (`claude auth login`). The first time, macOS asks to let `security` read "Claude Code-credentials": choose

@@ -89,14 +89,14 @@ namespace Loupedeck.ClaudeKeysPlugin
             }
         }
 
-        // The usage ring: the arc is how much is used, and the white tick is where an even pace would be.
+        // The usage ring: the arc is how much is left, and the white tick is where an even pace would leave you.
         // The arc and the line under the amount take the forecast's colour. The ring is drawn at key size.
-        public static BitmapImage Usage(PluginImageSize imageSize, Double used, Double pace, UsageTone tone, String amount, String line, String footer)
+        public static BitmapImage Usage(PluginImageSize imageSize, Double left, Double pace, UsageTone tone, String amount, String line, String footer)
         {
             const Single cx = 58, cy = 50, r = 37, stroke = 8;
             var circumference = 2 * MathF.PI * r;
             var color = tone switch { UsageTone.Good => Green, UsageTone.Warn => Amber, UsageTone.Bad => Red, _ => Muted };
-            var arc = (Single)Math.Clamp(used, 0, 1) * circumference;
+            var arc = (Single)Math.Clamp(left, 0, 1) * circumference;
             var angle = (Single)Math.Clamp(pace, 0, 1) * 2 * MathF.PI;
             var (sin, cos) = MathF.SinCos(angle);
 

@@ -3,9 +3,9 @@ namespace Loupedeck.ClaudeKeysPlugin
     using System;
     using System.Globalization;
 
-    // Shows your Claude usage and whether you're on track. The ring is what you've used, the white tick is where an
-    // even pace would put you today, and the colour is the forecast. Tap to switch between the 5-hour and weekly
-    // limits, or to refresh when there's only one.
+    // Shows how much Claude you have left and whether you're on track. The ring starts full and drains, the white tick
+    // is where an even pace would leave you today, and the colour is the forecast. Tap to switch between the 5-hour
+    // and weekly limits. It checks every 5 minutes; tapping never calls the server.
     // On hold pages it takes Cancel's slot, so it closes the page wherever it's placed, even when it replaces Cancel.
 
     public class UsageCommand : PluginDynamicCommand
@@ -59,14 +59,15 @@ namespace Loupedeck.ClaudeKeysPlugin
                 return KeyArt.UsageMessage(imageSize, this.Usage.Problem ?? "Usage…");
             }
 
-            var amount = reading.IsDollars ? Dollars(reading.Used) : $"{reading.Used:0}%";
+            var left = Math.Max(0, reading.Limit - reading.Used);
+            var amount = reading.IsDollars ? Dollars(left) : $"{left:0}%";
             var footer = pace.Tone == UsageTone.Stale ? Age(reading.FetchedAt)
-                : reading.IsDollars ? $"of {Dollars(reading.Limit)}" : reading.Label;
+                : reading.IsDollars ? $"left of {Dollars(reading.Limit)}" : $"left · {reading.Label}";
 
-            return KeyArt.Usage(imageSize, reading.Used / reading.Limit, pace.TimeGone, pace.Tone, amount, Line(reading, pace), footer);
+            return KeyArt.Usage(imageSize, left / reading.Limit, 1 - pace.TimeGone, pace.Tone, amount, Line(reading, pace), footer);
         }
 
-        // One short line: when you'd run out, how far ahead of pace you are, or how much you have spare.
+        // One short line: when you'd run out, how far over an even pace you are, or how much you have spare.
         private static String Line(UsageReading reading, UsagePace pace)
         {
             if (pace.Tone == UsageTone.Bad && pace.RunsOut is DateTime runsOut)
@@ -81,7 +82,7 @@ namespace Loupedeck.ClaudeKeysPlugin
                 return "on pace";
             }
 
-            return pace.Ahead > 0 ? $"+{ahead} ahead" : $"{ahead} spare";
+            return pace.Ahead > 0 ? $"{ahead} over" : $"{ahead} spare";
         }
 
         // A month shows the date, a week the day and hour, five hours the time.

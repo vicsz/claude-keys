@@ -46,6 +46,7 @@ namespace Loupedeck.ClaudeKeysPlugin
 
         private readonly String _dataDirectory;
         private readonly String _historyPath;
+        private readonly String _latestPath;
         private readonly Object _gate = new Object();
         private Timer _timer;
         private Int32 _polling;
@@ -61,6 +62,7 @@ namespace Loupedeck.ClaudeKeysPlugin
         {
             this._dataDirectory = dataDirectory;
             this._historyPath = Path.Combine(dataDirectory, "usage-history.json");
+            this._latestPath = Path.Combine(dataDirectory, "usage-latest.json");
         }
 
         public event Action Changed;
@@ -94,14 +96,11 @@ namespace Loupedeck.ClaudeKeysPlugin
             }
         }
 
-        public void RefreshNow() => ThreadPool.QueueUserWorkItem(_ => this.Poll());
-
-        // Switches between the 5-hour and weekly limits. With only one to show, it refreshes instead.
+        // Switches between the 5-hour and weekly limits. With only one to show, it does nothing: the key checks every 5 minutes.
         public void Toggle()
         {
             if (this._session == null || this._long == null || this._long.IsDollars)
             {
-                this.RefreshNow();
                 return;
             }
 
@@ -201,6 +200,12 @@ namespace Loupedeck.ClaudeKeysPlugin
             try
             {
                 this._history ??= this.LoadHistory();
+
+                if (this._session == null && this._long == null)
+                {
+                    this.LoadLatest();
+                }
+
                 var (session, longer) = this.Fetch();
 
                 if (longer != null || session != null)
@@ -213,6 +218,8 @@ namespace Loupedeck.ClaudeKeysPlugin
                     {
                         this.Remember(longer);
                     }
+
+                    this.SaveLatest();
 
                     this.LogOnce($"Usage: {Describe(longer)}{(session != null ? ", " + Describe(session) : String.Empty)}");
                 }
@@ -309,7 +316,14 @@ namespace Loupedeck.ClaudeKeysPlugin
             }
 
             var all = limits.EnumerateArray().ToList();
-            return (Limit(all, "session", TimeSpan.FromHours(5), "5 hours", now), Limit(all, "weekly_all", TimeSpan.FromDays(7), "week", now));
+            var fiveHours = TimeSpan.FromHours(5);
+            var week = Limit(all, "weekly_all", TimeSpan.FromDays(7), "week", now);
+
+            // Once a 5-hour window ends with no new use there's no reset time, so it shows as an unused window from now.
+            var session = Limit(all, "session", fiveHours, "5 hours", now)
+                ?? (week == null ? null : new UsageReading(false, 0, 100, now, now + fiveHours, null, "5 hours", now));
+
+            return (session, week);
         }
 
         private static UsageReading Limit(List<JsonElement> limits, String kind, TimeSpan length, String label, DateTime now)
@@ -438,6 +452,39 @@ namespace Loupedeck.ClaudeKeysPlugin
             catch (IOException ex)
             {
                 this.LogOnce("Could not save usage history: " + ex.Message);
+            }
+        }
+
+        // The last good readings, so a reload or a refused call shows them (greyed out once old) instead of nothing.
+        private void LoadLatest()
+        {
+            try
+            {
+                if (File.Exists(this._latestPath))
+                {
+                    var saved = JsonSerializer.Deserialize<UsageReading[]>(File.ReadAllText(this._latestPath));
+                    this._session = saved?.ElementAtOrDefault(0);
+                    this._long = saved?.ElementAtOrDefault(1);
+                    this.Changed?.Invoke();
+                }
+            }
+            catch (Exception ex)
+            {
+                this.LogOnce("Could not read the last usage: " + ex.Message);
+            }
+        }
+
+        private void SaveLatest()
+        {
+            try
+            {
+                var temp = this._latestPath + ".tmp";
+                File.WriteAllText(temp, JsonSerializer.Serialize(new[] { this._session, this._long }));
+                File.Move(temp, this._latestPath, true);
+            }
+            catch (Exception ex)
+            {
+                this.LogOnce("Could not save the last usage: " + ex.Message);
             }
         }
 
