@@ -1,5 +1,10 @@
 # Claude Keys
 
+> [!NOTE]
+> **Moved to [Keybo](https://github.com/vicsz/keybo).** Claude Keys and Util Keys are now one plugin, Keybo: the same
+> session keys, Dictate, Return, Cancel and Usage, plus Mac stats and a pixel robot. Get it from
+> [Keybo's releases](https://github.com/vicsz/keybo/releases/latest). This repo is archived.
+
 **Manage your Claude sessions from a Logitech MX Creative Keypad, without reaching for the mouse or keyboard.**
 
 Six agents, nine keys: see who needs you, jump there, dictate, send.
